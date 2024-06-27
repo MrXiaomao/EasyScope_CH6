@@ -1,0 +1,345 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: mcbc - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Debug/mcbc.res" /d "_DEBUG" "F:\张京隆\McaWaveVS\mcbc.rc"" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0DD.tmp" with contents
+[
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/mcbc.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\张京隆\McaWaveVS\calInv.cpp"
+"F:\张京隆\McaWaveVS\ChildFrm.cpp"
+"F:\张京隆\McaWaveVS\DialogTime.cpp"
+"F:\张京隆\McaWaveVS\DisplaySpm.cpp"
+"F:\张京隆\McaWaveVS\DlgAmp.cpp"
+"F:\张京隆\McaWaveVS\DlgAutoSetup.cpp"
+"F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp"
+"F:\张京隆\McaWaveVS\DlgGuass.cpp"
+"F:\张京隆\McaWaveVS\DlgMcsSet.cpp"
+"F:\张京隆\McaWaveVS\DlgPaperV.cpp"
+"F:\张京隆\McaWaveVS\DlgRoIDisplay.cpp"
+"F:\张京隆\McaWaveVS\DlgRS232.cpp"
+"F:\张京隆\McaWaveVS\DlgSetC51.cpp"
+"F:\张京隆\McaWaveVS\DlgSetRoi.cpp"
+"F:\张京隆\McaWaveVS\DlgStrip.cpp"
+"F:\张京隆\McaWaveVS\FindPeak.cpp"
+"F:\张京隆\McaWaveVS\Function.cpp"
+"F:\张京隆\McaWaveVS\GauseFit.cpp"
+"F:\张京隆\McaWaveVS\MainFrm.cpp"
+"F:\张京隆\McaWaveVS\mcbc.cpp"
+"F:\张京隆\McaWaveVS\mcbcDoc.cpp"
+"F:\张京隆\McaWaveVS\mcbcView.cpp"
+"F:\张京隆\McaWaveVS\pid.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0DD.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0DE.tmp" with contents
+[
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/mcbc.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\张京隆\McaWaveVS\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0DE.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0EF.tmp" with contents
+[
+Winmm.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/mca4k.pdb" /debug /machine:I386 /out:"Debug/mca4k.exe" /pdbtype:sept 
+".\Debug\calInv.obj"
+".\Debug\ChildFrm.obj"
+".\Debug\DialogTime.obj"
+".\Debug\DisplaySpm.obj"
+".\Debug\DlgAmp.obj"
+".\Debug\DlgAutoSetup.obj"
+".\Debug\DlgEnergyKedu.obj"
+".\Debug\DlgGuass.obj"
+".\Debug\DlgMcsSet.obj"
+".\Debug\DlgPaperV.obj"
+".\Debug\DlgRoIDisplay.obj"
+".\Debug\DlgRS232.obj"
+".\Debug\DlgSetC51.obj"
+".\Debug\DlgSetRoi.obj"
+".\Debug\DlgStrip.obj"
+".\Debug\FindPeak.obj"
+".\Debug\Function.obj"
+".\Debug\GauseFit.obj"
+".\Debug\MainFrm.obj"
+".\Debug\mcbc.obj"
+".\Debug\mcbcDoc.obj"
+".\Debug\mcbcView.obj"
+".\Debug\pid.obj"
+".\Debug\StdAfx.obj"
+".\Debug\mcbc.res"
+".\HTMLHELP.LIB"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPB0EF.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+calInv.cpp
+ChildFrm.cpp
+DialogTime.cpp
+F:\张京隆\McaWaveVS\DialogTime.cpp(105) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DialogTime.cpp(111) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(112) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(113) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(114) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(120) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(121) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(122) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DialogTime.cpp(123) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+DisplaySpm.cpp
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(113) : warning C4244: '=' : conversion from 'double' to 'short', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(289) : warning C4101: 'ystep1' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(289) : warning C4101: 'xcur' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(289) : warning C4101: 'ycur' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(288) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(288) : warning C4101: 'y1' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(288) : warning C4101: 'y2' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(291) : warning C4101: 'ymax' : unreferenced local variable
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(368) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(377) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(377) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(388) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(388) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(412) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(412) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DisplaySpm.cpp(404) : warning C4101: 'c5' : unreferenced local variable
+DlgAmp.cpp
+DlgAutoSetup.cpp
+DlgEnergyKedu.cpp
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(84) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(85) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(86) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(156) : warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(157) : warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(199) : warning C4101: 'nSelect' : unreferenced local variable
+F:\张京隆\McaWaveVS\DlgEnergyKedu.cpp(249) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+DlgGuass.cpp
+F:\张京隆\McaWaveVS\DlgGuass.cpp(136) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(137) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(138) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(139) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(140) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(141) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(142) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(143) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(144) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(145) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(152) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(153) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(154) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(155) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(156) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(222) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(223) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(224) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(225) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(226) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(227) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(228) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(229) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(230) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(231) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(238) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(239) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(240) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(241) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgGuass.cpp(242) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+DlgMcsSet.cpp
+F:\张京隆\McaWaveVS\DlgMcsSet.cpp(129) : warning C4101: 'output' : unreferenced local variable
+DlgPaperV.cpp
+F:\张京隆\McaWaveVS\DlgPaperV.cpp(62) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+DlgRoIDisplay.cpp
+F:\张京隆\McaWaveVS\DlgRoIDisplay.cpp(26) : warning C4244: '=' : conversion from 'const float' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\DlgRoIDisplay.cpp(27) : warning C4244: '=' : conversion from 'const float' to 'int', possible loss of data
+DlgRS232.cpp
+F:\张京隆\McaWaveVS\DlgRS232.cpp(54) : warning C4101: 'temp' : unreferenced local variable
+F:\张京隆\McaWaveVS\DlgRS232.cpp(53) : warning C4101: 'i' : unreferenced local variable
+DlgSetC51.cpp
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(205) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(206) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(207) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(208) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(209) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(213) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(214) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(215) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(216) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(217) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(218) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(219) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(220) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(221) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(222) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(223) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(224) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(225) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(226) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(227) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(348) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(375) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(402) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(429) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(456) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(488) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(556) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(557) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(558) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(559) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(561) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(550) : warning C4101: 'a1' : unreferenced local variable
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(550) : warning C4101: 'a2' : unreferenced local variable
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(550) : warning C4101: 'a3' : unreferenced local variable
+F:\张京隆\McaWaveVS\DlgSetC51.cpp(550) : warning C4101: 'a4' : unreferenced local variable
+DlgSetRoi.cpp
+DlgStrip.cpp
+F:\张京隆\McaWaveVS\DlgStrip.cpp(102) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgStrip.cpp(171) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\DlgStrip.cpp(131) : warning C4101: 'info' : unreferenced local variable
+FindPeak.cpp
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'FT' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(15) : warning C4101: 'f2' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(15) : warning C4101: 'f3' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'b' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(19) : warning C4101: 'C' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(22) : warning C4101: 't' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(19) : warning C4101: 'd' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(19) : warning C4101: 'D' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(19) : warning C4101: 'E' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'T1' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'F' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'Area' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'T2' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(19) : warning C4101: 'G' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'W' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(8) : warning C4101: 'pp' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'T3' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'x' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'X' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'T4' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'Y0' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(18) : warning C4101: 'Y' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'z' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(20) : warning C4101: 'y1' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(17) : warning C4101: 'l' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(11) : warning C4101: 'spm' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(17) : warning C4101: 'n' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(14) : warning C4101: 'n1' : unreferenced local variable
+F:\张京隆\McaWaveVS\FindPeak.cpp(13) : warning C4101: 'f1' : unreferenced local variable
+Function.cpp
+F:\张京隆\McaWaveVS\Function.cpp(151) : warning C4101: 'rrr' : unreferenced local variable
+GauseFit.cpp
+F:\张京隆\McaWaveVS\GauseFit.cpp(34) : warning C4101: 'x4' : unreferenced local variable
+F:\张京隆\McaWaveVS\GauseFit.cpp(34) : warning C4101: 'x5' : unreferenced local variable
+F:\张京隆\McaWaveVS\GauseFit.cpp(34) : warning C4101: 'x6' : unreferenced local variable
+F:\张京隆\McaWaveVS\GauseFit.cpp(34) : warning C4101: 'x7' : unreferenced local variable
+F:\张京隆\McaWaveVS\GauseFit.cpp(34) : warning C4101: 'x8' : unreferenced local variable
+F:\张京隆\McaWaveVS\GauseFit.cpp(203) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\GauseFit.cpp(316) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\GauseFit.cpp(179) : warning C4101: 'j' : unreferenced local variable
+MainFrm.cpp
+F:\张京隆\McaWaveVS\MainFrm.cpp(219) : warning C4101: 'temp' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(373) : warning C4390: ';' : empty controlled statement found; is this the intent?
+F:\张京隆\McaWaveVS\MainFrm.cpp(700) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\McaWaveVS\MainFrm.cpp(1045) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\MainFrm.cpp(1046) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\MainFrm.cpp(1050) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\MainFrm.cpp(1051) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\MainFrm.cpp(994) : warning C4101: 'checksum' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1089) : warning C4101: 'checksum' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1123) : warning C4101: 'bdata' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1122) : warning C4101: 'byteLen' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1201) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1202) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1258) : warning C4018: '>=' : signed/unsigned mismatch
+F:\张京隆\McaWaveVS\MainFrm.cpp(1273) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1274) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1290) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1305) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1306) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1335) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1336) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1367) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1368) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1390) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1391) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1471) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1429) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1533) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1534) : warning C4101: 'cross' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1533) : warning C4101: 'j' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1593) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1622) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1753) : warning C4101: 'dcb' : unreferenced local variable
+F:\张京隆\McaWaveVS\MainFrm.cpp(1957) : warning C4101: 'transData' : unreferenced local variable
+mcbc.cpp
+Generating Code...
+Compiling...
+mcbcDoc.cpp
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(164) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(165) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(166) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(167) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(272) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(273) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(234) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(612) : warning C4244: '=' : conversion from 'long' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(619) : warning C4244: '-=' : conversion from 'float' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(597) : warning C4101: 'j' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(667) : warning C4101: 'nMca' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcDoc.cpp(667) : warning C4101: 'i' : unreferenced local variable
+mcbcView.cpp
+F:\张京隆\McaWaveVS\mcbcView.cpp(244) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(245) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(384) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(388) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(388) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(456) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(475) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(482) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(485) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(487) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(493) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(494) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(498) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(499) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(502) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(505) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(507) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(513) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(514) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(518) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1190) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1155) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1211) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1259) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1242) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1306) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1388) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1389) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1391) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1393) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1395) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1437) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\McaWaveVS\mcbcView.cpp(1456) : warning C4101: 'sum4' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1469) : warning C4101: 'radio1' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1492) : warning C4101: 'mini' : unreferenced local variable
+F:\张京隆\McaWaveVS\mcbcView.cpp(1551) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+pid.cpp
+Generating Code...
+Linking...
+mcbcView.obj : error LNK2001: unresolved external symbol "public: virtual __thiscall CWaveDisplay::~CWaveDisplay(void)" (??1CWaveDisplay@@UAE@XZ)
+mcbcView.obj : error LNK2001: unresolved external symbol "public: void __thiscall CWaveDisplay::DrawLine(void)" (?DrawLine@CWaveDisplay@@QAEXXZ)
+mcbcView.obj : error LNK2001: unresolved external symbol "public: __thiscall CWaveDisplay::CWaveDisplay(void)" (??0CWaveDisplay@@QAE@XZ)
+Debug/mca4k.exe : fatal error LNK1120: 3 unresolved externals
+执行 link.exe 时出错.
+
+
+
+<h3>Results</h3>
+mca4k.exe - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

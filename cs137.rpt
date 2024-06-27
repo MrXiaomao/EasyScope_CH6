@@ -1,0 +1,77 @@
+ 
+
+  ORTEC     G V - I (  45) GAM32  G53W1.05  04-MAY-2008 19:22:42 Page    1
+                                 Spectrum name: cs137.chn                        
+                                                                                 
+ Sample description                                             
+                                                                      
+                                                                      
+
+ Spectrum Filename: F:\759³§\C8051\MCB_C8051_VC\cs137.chn
+
+ Acquisition information
+        Start time:                 04-Jun-2008 11:23:16  
+        Live time:               802 
+        Real time:               2050
+        Dead time:                 60.88 %
+        Detector ID:                    0
+
+ Detector system                                                
+                                                                      
+                                                                      
+
+ Calibration
+        Filename:                                                   
+      Maestro two-point calibration.                                  
+                                                                      
+
+        Energy Calibration                                      
+             Created:               04-Jun-2008 11:23:16
+             Zero offset:         234.650 keV
+             Gain:                 -0.003 keV/channel
+             Quadratic:             0.000E+00 keV/channel^2
+
+        Efficiency Calibration
+             Created:                                   
+             Knee Energy:         150.00 keV
+             Above the Knee:        None             Uncertainty =   0.00 %
+             Below the Knee:        None             Uncertainty =   0.00 %
+
+ Library Files
+        Main analysis library:      NULL.LIB
+        Library Match Width:        0.500
+
+ Analysis parameters
+        Analysis engine:            GAM32   G53W1.05
+        Start channel:             50 (   234.49keV )
+        Stop channel:             999 (   231.43keV )
+        Peak rejection level:      50.000%
+        Peak search sensitivity:    0
+        Sample Size:                1.0000E+00
+        Activity scaling factor:    1.0000E+00/(  1.0000E+00*  1.0000E+00) = 
+                                    1.0000E+00
+        Detection limit method:     Traditional ORTEC method                                        
+        Random error:               0.0000000E+00
+        Systematic error:           0.0000000E+00
+        Fraction Limit:             0.000%
+        Background width:           best method (based on spectrum).                                
+
+
+  ORTEC     G V - I (  45) GAM32  G53W1.05  04-MAY-2008 19:22:42 Page    2
+                                 Spectrum name: cs137.chn                        
+                                                                                 
+        Half lives decay limit:     0.000
+        Activity range factor:      0.000
+        Min. step backg. energy     0.000
+
+ Corrections                          Status          Comments
+        Decay correct to date:         NO   
+        Decay during acquisition:      YES  
+        Decay during collection:       NO   
+        True coincidence correction:   NO   
+        Peaked background correction:  NO   
+        Absorption (Internal):         NO   
+        Geometry correction:           NO   
+        Random summing:                NO   
+
+

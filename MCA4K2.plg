@@ -1,0 +1,329 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: mcbc - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDD.tmp" with contents
+[
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/MCA4K2.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\张京隆\MCA4K\calInv.cpp"
+"F:\张京隆\MCA4K\ChildFrm.cpp"
+"F:\张京隆\MCA4K\DialogTime.cpp"
+"F:\张京隆\MCA4K\DisplaySpm.cpp"
+"F:\张京隆\MCA4K\DlgAmp.cpp"
+"F:\张京隆\MCA4K\DlgAutoSetup.cpp"
+"F:\张京隆\MCA4K\DlgEnergyKedu.cpp"
+"F:\张京隆\MCA4K\DlgGuass.cpp"
+"F:\张京隆\MCA4K\DlgMcsSet.cpp"
+"F:\张京隆\MCA4K\DlgPaperV.cpp"
+"F:\张京隆\MCA4K\DlgRoIDisplay.cpp"
+"F:\张京隆\MCA4K\DlgRS232.cpp"
+"F:\张京隆\MCA4K\DlgSetC51.cpp"
+"F:\张京隆\MCA4K\DlgSetRoi.cpp"
+"F:\张京隆\MCA4K\DlgStrip.cpp"
+"F:\张京隆\MCA4K\FindPeak.cpp"
+"F:\张京隆\MCA4K\Function.cpp"
+"F:\张京隆\MCA4K\GauseFit.cpp"
+"F:\张京隆\MCA4K\MainFrm.cpp"
+"F:\张京隆\MCA4K\mcbc.cpp"
+"F:\张京隆\MCA4K\mcbcDoc.cpp"
+"F:\张京隆\MCA4K\mcbcView.cpp"
+"F:\张京隆\MCA4K\pid.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDD.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDE.tmp" with contents
+[
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/MCA4K2.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\张京隆\MCA4K\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDE.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDF.tmp" with contents
+[
+Winmm.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/MCA4K2.pdb" /debug /machine:I386 /out:"Debug/MCA4K2.exe" /pdbtype:sept 
+".\Debug\calInv.obj"
+".\Debug\ChildFrm.obj"
+".\Debug\DialogTime.obj"
+".\Debug\DisplaySpm.obj"
+".\Debug\DlgAmp.obj"
+".\Debug\DlgAutoSetup.obj"
+".\Debug\DlgEnergyKedu.obj"
+".\Debug\DlgGuass.obj"
+".\Debug\DlgMcsSet.obj"
+".\Debug\DlgPaperV.obj"
+".\Debug\DlgRoIDisplay.obj"
+".\Debug\DlgRS232.obj"
+".\Debug\DlgSetC51.obj"
+".\Debug\DlgSetRoi.obj"
+".\Debug\DlgStrip.obj"
+".\Debug\FindPeak.obj"
+".\Debug\Function.obj"
+".\Debug\GauseFit.obj"
+".\Debug\MainFrm.obj"
+".\Debug\mcbc.obj"
+".\Debug\mcbcDoc.obj"
+".\Debug\mcbcView.obj"
+".\Debug\pid.obj"
+".\Debug\StdAfx.obj"
+".\Debug\mcbc.res"
+".\HTMLHELP.LIB"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5DDF.tmp"
+<h3>Output Window</h3>
+Compiling...
+StdAfx.cpp
+Compiling...
+calInv.cpp
+ChildFrm.cpp
+DialogTime.cpp
+F:\张京隆\MCA4K\DialogTime.cpp(105) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DialogTime.cpp(111) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(112) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(113) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(114) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(120) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(121) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(122) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DialogTime.cpp(123) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+DisplaySpm.cpp
+F:\张京隆\MCA4K\DisplaySpm.cpp(113) : warning C4244: '=' : conversion from 'double' to 'short', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(320) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(300) : warning C4101: 'ystep1' : unreferenced local variable
+F:\张京隆\MCA4K\DisplaySpm.cpp(375) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(384) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(384) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(395) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(395) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(405) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(406) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(406) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(417) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(417) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DisplaySpm.cpp(409) : warning C4101: 'c5' : unreferenced local variable
+DlgAmp.cpp
+DlgAutoSetup.cpp
+DlgEnergyKedu.cpp
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(84) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(85) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(86) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(156) : warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(157) : warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(199) : warning C4101: 'nSelect' : unreferenced local variable
+F:\张京隆\MCA4K\DlgEnergyKedu.cpp(249) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+DlgGuass.cpp
+F:\张京隆\MCA4K\DlgGuass.cpp(136) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(137) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(138) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(139) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(140) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(141) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(142) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(143) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(144) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(145) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(152) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(153) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(154) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(155) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(156) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(222) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(223) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(224) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(225) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(226) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(227) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(228) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(229) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(230) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(231) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(238) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(239) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(240) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(241) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgGuass.cpp(242) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+DlgMcsSet.cpp
+F:\张京隆\MCA4K\DlgMcsSet.cpp(129) : warning C4101: 'output' : unreferenced local variable
+DlgPaperV.cpp
+F:\张京隆\MCA4K\DlgPaperV.cpp(62) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+DlgRoIDisplay.cpp
+F:\张京隆\MCA4K\DlgRoIDisplay.cpp(26) : warning C4244: '=' : conversion from 'const float' to 'int', possible loss of data
+F:\张京隆\MCA4K\DlgRoIDisplay.cpp(27) : warning C4244: '=' : conversion from 'const float' to 'int', possible loss of data
+DlgRS232.cpp
+F:\张京隆\MCA4K\DlgRS232.cpp(54) : warning C4101: 'temp' : unreferenced local variable
+F:\张京隆\MCA4K\DlgRS232.cpp(53) : warning C4101: 'i' : unreferenced local variable
+DlgSetC51.cpp
+F:\张京隆\MCA4K\DlgSetC51.cpp(205) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(206) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(207) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(208) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(209) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(213) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(214) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(215) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(216) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(217) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(218) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(219) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(220) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(221) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(222) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(223) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(224) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(225) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(226) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(227) : warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(348) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(375) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(402) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(429) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(456) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(488) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(556) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(557) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(558) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(559) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(561) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\DlgSetC51.cpp(550) : warning C4101: 'a1' : unreferenced local variable
+F:\张京隆\MCA4K\DlgSetC51.cpp(550) : warning C4101: 'a2' : unreferenced local variable
+F:\张京隆\MCA4K\DlgSetC51.cpp(550) : warning C4101: 'a3' : unreferenced local variable
+F:\张京隆\MCA4K\DlgSetC51.cpp(550) : warning C4101: 'a4' : unreferenced local variable
+DlgSetRoi.cpp
+DlgStrip.cpp
+F:\张京隆\MCA4K\DlgStrip.cpp(102) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgStrip.cpp(171) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\DlgStrip.cpp(131) : warning C4101: 'info' : unreferenced local variable
+FindPeak.cpp
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'FT' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(15) : warning C4101: 'f2' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(15) : warning C4101: 'f3' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'b' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(19) : warning C4101: 'C' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(22) : warning C4101: 't' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(19) : warning C4101: 'd' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(19) : warning C4101: 'D' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(19) : warning C4101: 'E' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'T1' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'F' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'Area' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'T2' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(19) : warning C4101: 'G' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'W' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(8) : warning C4101: 'pp' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'T3' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'x' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'X' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'T4' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'Y0' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(18) : warning C4101: 'Y' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'z' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(20) : warning C4101: 'y1' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(17) : warning C4101: 'l' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(11) : warning C4101: 'spm' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(17) : warning C4101: 'n' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(14) : warning C4101: 'n1' : unreferenced local variable
+F:\张京隆\MCA4K\FindPeak.cpp(13) : warning C4101: 'f1' : unreferenced local variable
+Function.cpp
+F:\张京隆\MCA4K\Function.cpp(151) : warning C4101: 'rrr' : unreferenced local variable
+GauseFit.cpp
+F:\张京隆\MCA4K\GauseFit.cpp(34) : warning C4101: 'x4' : unreferenced local variable
+F:\张京隆\MCA4K\GauseFit.cpp(34) : warning C4101: 'x5' : unreferenced local variable
+F:\张京隆\MCA4K\GauseFit.cpp(34) : warning C4101: 'x6' : unreferenced local variable
+F:\张京隆\MCA4K\GauseFit.cpp(34) : warning C4101: 'x7' : unreferenced local variable
+F:\张京隆\MCA4K\GauseFit.cpp(34) : warning C4101: 'x8' : unreferenced local variable
+F:\张京隆\MCA4K\GauseFit.cpp(203) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\GauseFit.cpp(316) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\GauseFit.cpp(179) : warning C4101: 'j' : unreferenced local variable
+MainFrm.cpp
+F:\张京隆\MCA4K\MainFrm.cpp(219) : warning C4101: 'temp' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(372) : warning C4390: ';' : empty controlled statement found; is this the intent?
+F:\张京隆\MCA4K\MainFrm.cpp(701) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+F:\张京隆\MCA4K\MainFrm.cpp(1048) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\MainFrm.cpp(1049) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\MainFrm.cpp(1053) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\MainFrm.cpp(1054) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\MainFrm.cpp(995) : warning C4101: 'checksum' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1028) : warning C4101: 'bdata' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1141) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1142) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1200) : warning C4018: '>=' : signed/unsigned mismatch
+F:\张京隆\MCA4K\MainFrm.cpp(1215) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1216) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1232) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1247) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1248) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1277) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1278) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1309) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1310) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1332) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1333) : warning C4101: 'status' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1413) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1371) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1475) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1476) : warning C4101: 'cross' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1475) : warning C4101: 'j' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1535) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1564) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\MainFrm.cpp(1695) : warning C4101: 'dcb' : unreferenced local variable
+mcbc.cpp
+Generating Code...
+Compiling...
+mcbcDoc.cpp
+F:\张京隆\MCA4K\mcbcDoc.cpp(164) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(165) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(166) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(167) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(272) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(273) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(234) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcDoc.cpp(612) : warning C4244: '=' : conversion from 'long' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(619) : warning C4244: '-=' : conversion from 'float' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcDoc.cpp(597) : warning C4101: 'j' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcDoc.cpp(667) : warning C4101: 'nMca' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcDoc.cpp(667) : warning C4101: 'i' : unreferenced local variable
+mcbcView.cpp
+F:\张京隆\MCA4K\mcbcView.cpp(326) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(327) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(440) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(459) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(466) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(469) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(471) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(477) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(478) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(482) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(483) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(486) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(489) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(491) : warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(497) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(498) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(502) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1168) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1249) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1313) : warning C4101: 'written' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1296) : warning C4101: 'i' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1360) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1441) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1442) : warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1444) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1446) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1448) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1490) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+F:\张京隆\MCA4K\mcbcView.cpp(1509) : warning C4101: 'sum4' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1522) : warning C4101: 'radio1' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1545) : warning C4101: 'mini' : unreferenced local variable
+F:\张京隆\MCA4K\mcbcView.cpp(1604) : warning C4244: '=' : conversion from 'double' to 'long', possible loss of data
+pid.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+MCA4K2.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
