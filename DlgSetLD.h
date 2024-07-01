@@ -23,4 +23,5 @@ public:
 //	CString m_Ch1LD;
 	float m_Ch1LD[6];
 	virtual void OnOK();
+	int m_PeakPoint;
 };

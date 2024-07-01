@@ -111,7 +111,7 @@ CWaveDisplay::~CWaveDisplay()
 }
 void CWaveDisplay::DrawLine()
 {
-	int	xTextWidth=int(80*kx),yTextWidth=int(50*ky);
+	int	xTextWidth=int(86*kx),yTextWidth=int(50*ky);
 	if(!pDC->IsPrinting())
 		oldBrush = (CBrush *)pDC->SelectObject(&bkBrush);
 	else
@@ -144,7 +144,7 @@ void CWaveDisplay::DrawLine()
 
 	double	xUnit = (nScrWidth-xTextWidth)/8.;
 //	double	yUnit = (nScrHeight-yTextWidth)/8.;
-	double	yUnit = (nScrHeight-yTextWidth)/5.;
+	double	yUnit = (nScrHeight-yTextWidth)/4.;
 	double	xUnit5 = (nScrWidth-xTextWidth)/8./5.;
 //	double	yUnit5 = (nScrHeight-yTextWidth)/8./5.;
 	double	yUnit5 = (nScrHeight-yTextWidth)/10./5.;
@@ -153,34 +153,6 @@ void CWaveDisplay::DrawLine()
 	int		i;
 
 	oldPen = (CPen *)pDC->SelectObject(&thinPen);
-/*
-	if(!pDC->IsPrinting())
-	for(i=0;i<40;i++)//显示垂直细线
-	{
-		pDC->MoveTo(nScrOrgX+xTextWidth+int(i*xUnit5),nScrOrgY+10*ky);
-		pDC->LineTo(nScrOrgX+xTextWidth+int(i*xUnit5),
-			nScrOrgY+nScrHeight-yTextWidth+10*ky);
-	}
-
-	if(!pDC->IsPrinting())
-	{
-	if(mIsTDS==0)
-	{
-		for(i=0;i<40;i++)//显示水平细线
-		{
-			pDC->MoveTo(nScrOrgX+xTextWidth,nScrOrgY+10*ky+int(i*yUnit5));
-			pDC->LineTo(nScrOrgX+nScrWidth,nScrOrgY+10*ky+int(i*yUnit5));
-		}
-	}
-	else
-	{
-		for(i=0;i<50;i++)//显示水平细线
-		{
-			pDC->MoveTo(nScrOrgX+xTextWidth,nScrOrgY+10*ky+int(i*yUnit5));
-			pDC->LineTo(nScrOrgX+nScrWidth,nScrOrgY+10*ky+int(i*yUnit5));
-		}
-	}
-	}*/
 	if(!pDC->IsPrinting())
 		pLinePen = &linePen;
 	else
@@ -192,16 +164,14 @@ void CWaveDisplay::DrawLine()
 		pDC->LineTo(nScrOrgX+xTextWidth+int(i*xUnit),
 			nScrOrgY+nScrHeight-yTextWidth+10*ky);
 	}
-	for(i=0;i<11;i++)//显示水平粗线
+
+	for(i=0;i<4;i++)//显示水平粗线
 	{
-//		if(i==0||i==8)
-//			pDC->SelectObject(&linePen);
-//		else
-			pDC->SelectObject(pLinePen);
+		pDC->SelectObject(pLinePen);
 		pDC->MoveTo(nScrOrgX+xTextWidth,nScrOrgY+10*ky+int(i*yUnit));
 		pDC->LineTo(nScrOrgX+nScrWidth,nScrOrgY+10*ky+int(i*yUnit));
 	}
-
+	
 	pDC->SelectObject(&blackPen);
 	for(i=0;i<6;i++)//显示垂直黑线(在X)
 	{
@@ -210,7 +180,8 @@ void CWaveDisplay::DrawLine()
 		pDC->LineTo(nScrOrgX+xTextWidth+int(i*xUnit),
 			nScrOrgY+nScrHeight-yTextWidth+20*ky);
 	}
-	for(i=0;i<11;i++)
+
+	for(i=0;i<5;i++)
 	{
 		pDC->MoveTo(int(nScrOrgX+xTextWidth-10*kx),int(nScrOrgY+10*ky+i*yUnit));
 		pDC->LineTo(int(nScrOrgX+xTextWidth-5*kx),int(nScrOrgY+10*ky+i*yUnit));

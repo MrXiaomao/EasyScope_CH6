@@ -23,27 +23,33 @@
     <SccProjectName />
     <SccLocalPath />
     <Keyword>MFCProj</Keyword>
+    <ProjectGuid>{E3F32808-78CB-9106-69A1-B3855E46CE21}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -124,6 +130,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,7 +168,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>HTMLHELP64.LIB;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -252,7 +259,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>HTMLHELP64.LIB;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <VerboseOutput>false</VerboseOutput>
@@ -265,13 +272,14 @@
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="DialogTime.cpp" />
     <ClCompile Include="DisplaySpm.cpp" />
-    <ClCompile Include="DlgAmp.cpp" />
+    <ClCompile Include="DlgHVSet.cpp" />
     <ClCompile Include="DlgAutoSetup.cpp" />
     <ClCompile Include="DlgBaseLine.cpp" />
     <ClCompile Include="DlgEnergyKedu.cpp" />
     <ClCompile Include="DlgGuass.cpp" />
     <ClCompile Include="DlgRoIDisplay.cpp" />
     <ClCompile Include="DlgRS232.cpp" />
+    <ClCompile Include="DlgSampleRateSet.cpp" />
     <ClCompile Include="DlgSetLD.cpp" />
     <ClCompile Include="DlgSetRoi.cpp" />
     <ClCompile Include="DlgStrip.cpp" />
@@ -303,13 +311,14 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="DialogTime.h" />
     <ClInclude Include="DisplaySpm.h" />
-    <ClInclude Include="DlgAmp.h" />
+    <ClInclude Include="DlgHVSet.h" />
     <ClInclude Include="DlgAutoSetup.h" />
     <ClInclude Include="DlgBaseLine.h" />
     <ClInclude Include="DlgEnergyKedu.h" />
     <ClInclude Include="DlgGuass.h" />
     <ClInclude Include="DlgRoIDisplay.h" />
     <ClInclude Include="DlgRS232.h" />
+    <ClInclude Include="DlgSampleRateSet.h" />
     <ClInclude Include="DlgSetLD.h" />
     <ClInclude Include="DlgSetRoi.h" />
     <ClInclude Include="DlgStrip.h" />
@@ -334,6 +343,14 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="HTMLHELP.LIB" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\bitmap1.bmp" />
+    <None Include="res\bitmap2.bmp" />
+    <None Include="res\bitmap3.bmp" />
+    <None Include="res\bitmap4.bmp" />
+    <None Include="res\bitmap5.bmp" />
+    <None Include="res\bitmap6.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

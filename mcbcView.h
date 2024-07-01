@@ -77,6 +77,7 @@ public:
 	double	kh;
 	int		inBuf[10];
 	CBrush	bkBrush;
+	CBrush	adcBrush[6];
 	BOOL	bSetRoi;
 	BYTE	deviceIoChn;
 	double  kx,ky;

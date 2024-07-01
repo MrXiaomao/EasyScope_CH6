@@ -2,15 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{451715e5-f289-4dd0-86dd-743cb9369a8f}</UniqueIdentifier>
+      <UniqueIdentifier>{d56c0c0f-8bd8-4e63-9b4c-48040eb76d5d}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{9ad1a857-49a0-4c22-9063-2dbb048d1a8c}</UniqueIdentifier>
+      <UniqueIdentifier>{64efa811-5844-4fc7-8f08-7985b13a5c88}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{62c1b900-381d-4c77-babf-854b2e64bfa6}</UniqueIdentifier>
+      <UniqueIdentifier>{21e258b7-3710-446d-a69d-e5a669cbe5bf}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
@@ -27,6 +27,9 @@
     <ClCompile Include="DisplaySpm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DlgAmp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DlgAutoSetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,10 +39,19 @@
     <ClCompile Include="DlgGuass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DlgMcsSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgPaperV.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DlgRoIDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgRS232.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgSetC51.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgSetRoi.cpp">
@@ -75,21 +87,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WaveDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgBaseLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgSetLD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgHVSet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgSampleRateSet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="mcbc.rc">
@@ -109,6 +106,9 @@
     <ClInclude Include="DisplaySpm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DlgAmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DlgAutoSetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,10 +118,19 @@
     <ClInclude Include="DlgGuass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DlgMcsSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgPaperV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DlgRoIDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgRS232.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgSetC51.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgSetRoi.h">
@@ -151,59 +160,28 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WaveDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgBaseLine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgSetLD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgHVSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgSampleRateSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\mcbc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\mcbcDoc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="aa.txt" />
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="HTMLHELP.LIB" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\mcbc.ico">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="res\mcbc.rc2">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="res\mcbcDoc.ico">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="aa.txt" />
-    <CustomBuild Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\bitmap2.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\bitmap3.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\bitmap6.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\bitmap4.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\bitmap5.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

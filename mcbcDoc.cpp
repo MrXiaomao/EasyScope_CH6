@@ -9,6 +9,7 @@
 #include "define.h"
 #include "ChildFrm.h"
 #include "DlgStrip.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +35,7 @@ extern	McsSetData	mcsSetData[4];
 extern	bool	bDispBuffer;
 extern	CTime bufStartTime[4],hardSatrtTime[4];
 extern	StripData stripData;
+extern	CMainFrame	*pWnd;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMcbcDoc
@@ -139,11 +141,15 @@ void CMcbcDoc::OnFileOpen()
 			int spmLen=w1[nCurView]->dispspm.spara.Horz;
 			if(mfile.Open(fileName.GetBuffer(50),CFile::modeRead))
 			{
-				spmLen=(mfile.GetLength()-32-512)/8;
+				spmLen=(mfile.GetLength()-32-512)/4/6;
+				MaxChannel=spmLen;
+				pWnd->AdcChange();
 //				bDispBuffer=1;
 				mfile.Read(&chnHead,32);
-				mfile.Read((void *)pAdcBuf[0],UINT(spmLen*4));
-				mfile.Read((void *)pAdcBuf[1],UINT(spmLen*4));
+				for(i=0;i<6;i++)
+				{
+					mfile.Read((void *)pAdcBuf[i],UINT(spmLen*4));
+				}
 				mfile.Read(&chnEnd,512);
 				mfile.Close();
 				fileName = dlg.GetFileName();
@@ -167,17 +173,11 @@ void CMcbcDoc::OnFileOpen()
 			mfile.Open(fileName.GetBuffer(50),CFile::modeRead);
 			for(int i=0;i<MaxChannel;i++)
 			{
-				mfile.Read(str.GetBuffer(30),18);
+				mfile.Read(str.GetBuffer(2000),18);
+
 				*(pAdcBuf[nCurView]+i)=atoi(str.GetBuffer(18)+8);
 			}
 			mfile.Close();
-		}
-	}
-	if(MaxChannel<8192)
-	{
-		for(int i=MaxChannel;i<8192;i++)
-		{
-			*(pAdcBuf[nCurView]+i)=0;
 		}
 	}
 	w1[0]->Invalidate();
@@ -254,15 +254,9 @@ void CMcbcDoc::OnFileSave()
 			int spmLen=w1[nCurView]->dispspm.spara.Horz;
 			mfile.Open(fileName.GetBuffer(50),CFile::modeCreate|CFile::modeWrite);
 			mfile.Write(&chnHead,32);
-/*			if(bDispBuffer)
+			for(i=0;i<6;i++)
 			{
-				mfile.Write((void *)pMemBuf[0],UINT(spmLen*4));
-				mfile.Write((void *)pMemBuf[1],UINT(spmLen*4));
-			}
-			else*/
-			{
-				mfile.Write((void *)pAdcBuf[0],UINT(spmLen*4));
-				mfile.Write((void *)pAdcBuf[1],UINT(spmLen*4));
+				mfile.Write((void *)pAdcBuf[i],UINT(MaxChannel*4));
 			}
 			mfile.Write(&chnEnd,512);
 			mfile.Close();
@@ -272,11 +266,13 @@ void CMcbcDoc::OnFileSave()
 		{
 			int i;
 			mfile.Open(fileName.GetBuffer(50),CFile::modeCreate|CFile::modeWrite);
+			bDispBuffer=0;
 			if(bDispBuffer)
 			{
 				for(i=0;i<MaxChannel;i++)
 				{
-					str.Format("%8d%8d\xd\n",i,*(pMemBuf[nCurView]+i));
+					str.Format("%8d%8d%8d%8d%8d%8d%8d\xd\n",i+1,*(pMemBuf[0]+i),*(pMemBuf[1]+i),*(pMemBuf[2]+i)
+						,*(pMemBuf[3]+i),*(pMemBuf[4]+i),*(pMemBuf[5]+i));
 					mfile.Write(str.GetBuffer(20),str.GetLength());
 				}
 			}
@@ -284,7 +280,8 @@ void CMcbcDoc::OnFileSave()
 			{
 				for(i=0;i<MaxChannel;i++)
 				{
-					str.Format("%8d%8d\xd\n",i,*(pAdcBuf[nCurView]+i));
+					str.Format("%8d%8d%8d%8d%8d%8d%8d\xd\n",i+1,*(pAdcBuf[0]+i),*(pAdcBuf[1]+i),*(pAdcBuf[2]+i)
+						,*(pAdcBuf[3]+i),*(pAdcBuf[4]+i),*(pAdcBuf[5]+i));
 					mfile.Write(str.GetBuffer(20),str.GetLength());
 				}
 			}

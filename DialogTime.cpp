@@ -20,8 +20,9 @@ extern unsigned long	lpnumber;
 extern	DWORD toBeWritten;
 bool	bAdcWorkOn[4];
 extern  bool	bHVOpen;
-extern	int iClientSock;
+extern	int iClientSock[3];
 void WriteFileTCP(int iClientSock,BYTE * m_TxData,int toBeWritten, unsigned long& lpnumber);
+extern	double   HV_k,HV_b,TH_k,TH_b;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDialogTime dialog
@@ -64,7 +65,16 @@ END_MESSAGE_MAP()
 BOOL CDialogTime::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	mHVClose.EnableWindow(0);
+	if(bHVOpen)
+	{
+		mHVOpen.EnableWindow(!bHVOpen);
+		mHVClose.EnableWindow(bHVOpen);
+	}
+	else
+	{
+		mHVOpen.EnableWindow(bHVOpen);
+		mHVClose.EnableWindow(!bHVOpen);
+	}
 
 	return TRUE; 
 }
@@ -84,7 +94,7 @@ void CDialogTime::OnBnClickedButton1()//开高压
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(1);
 	nPresetTime[0]=m_PresetHV;
-	int nDAC=int(m_PresetHV*65536/1500.+0.5);
+	int nDAC=int(m_PresetHV*HV_k+HV_b+0.5);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -97,7 +107,7 @@ void CDialogTime::OnBnClickedButton1()//开高压
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(iClientSock[0],m_TxData,toBeWritten,lpnumber);
 	bHVOpen=1;
 	mHVOpen.EnableWindow(!bHVOpen);
 	mHVClose.EnableWindow(bHVOpen);
@@ -121,7 +131,7 @@ void CDialogTime::OnBnClickedButton2()//关高压
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(iClientSock[0],m_TxData,toBeWritten,lpnumber);
 	bHVOpen=0;
 	mHVOpen.EnableWindow(!bHVOpen);
 	mHVClose.EnableWindow(bHVOpen);
@@ -145,7 +155,7 @@ void CDialogTime::OnBnClickedRadio1()//低阻
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(iClientSock[0],m_TxData,toBeWritten,lpnumber);
 	bAdcWorkOn[0] = b50R;
 }
 
@@ -165,7 +175,7 @@ void CDialogTime::OnBnClickedRadio14()//高阻
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(iClientSock[0],m_TxData,toBeWritten,lpnumber);
 	b50R=0;
 	bAdcWorkOn[0] = b50R;
 }

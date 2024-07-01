@@ -30,7 +30,7 @@ extern bool	bPresetReal[4];
 extern int		nComx;
 extern CAutoData autoData;
 extern unsigned char amplifier;
-extern unsigned short  nHV;
+extern unsigned short  nHV[3];
 extern CGuassData mGuassData;
 extern	char	strCom[10][5];
 extern	int	mAdcGain;
@@ -43,6 +43,7 @@ extern unsigned short   mHV;//高压限值
 extern	bool	bWaveDisp[6];
 extern	bool	bWaveShort;
 extern	float fLDWave[6];
+extern	int		mPeakPoint;//寻峰连续上升和下降点数
 
 /////////////////////////////////////////////////////////////////////////////
 // CMcbcApp
@@ -113,11 +114,12 @@ BOOL CMcbcApp::InitInstance()
 	mfile.Read(bAdcSet,sizeof(bAdcSet));
 	mfile.Read(&fLD,sizeof(fLD));
 	mfile.Read(&Vort,sizeof(Vort));
-	mfile.Read(&nHV,sizeof(nHV));
+	mfile.Read(nHV,sizeof(nHV));
 	mfile.Read(&nWaveRepeat,sizeof(nWaveRepeat));
 	mfile.Read(bWaveDisp,sizeof(bWaveDisp));
 	mfile.Read(&bWaveShort,sizeof(bWaveShort));
 	mfile.Read(fLDWave,sizeof(fLDWave));
+	mfile.Read(&mPeakPoint,sizeof(mPeakPoint));
 	mfile.Close();
 	}
 	else

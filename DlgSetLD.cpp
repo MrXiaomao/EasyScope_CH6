@@ -6,6 +6,7 @@
 #include "DlgSetLD.h"
 #include "afxdialogex.h"
 extern	float fLDWave[6];
+extern int	mPeakPoint;//寻峰连续上升和下降点数
 
 // CDlgSetLD 对话框
 
@@ -13,6 +14,7 @@ IMPLEMENT_DYNAMIC(CDlgSetLD, CDialogEx)
 
 CDlgSetLD::CDlgSetLD(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDlgSetLD::IDD, pParent)
+	, m_PeakPoint(mPeakPoint)
 {
 
 	//  m_Ch1LD = _T("");
@@ -34,6 +36,7 @@ void CDlgSetLD::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_CH1_LD4, m_Ch1LD[3]);
 	DDX_Text(pDX, IDC_CH1_LD5, m_Ch1LD[4]);
 	DDX_Text(pDX, IDC_CH1_LD6, m_Ch1LD[5]);
+	DDX_Text(pDX, IDC_PEAK_POINT, m_PeakPoint);
 }
 
 
@@ -61,5 +64,6 @@ void CDlgSetLD::OnOK()
 	UpdateData(1);
 	for(int i=0;i<6;i++)
 		fLDWave[i] = m_Ch1LD[i];
+	mPeakPoint=m_PeakPoint;
 	CDialogEx::OnOK();
 }

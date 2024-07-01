@@ -1,13 +1,13 @@
 [OPTIONS]
 Compatibility=1.1 or later
 Compiled file=Mca1Help.chm
-Default topic=4096多道分析器.mht
+Default topic=BF3管测中子产额-使用说明书.mht
 Display compile progress=No
-Language=0x804 中文(中国)
+Language=0x804 中文(简体，中国)
 
 
 [FILES]
-4096多道分析器.mht
+BF3管测中子产额-使用说明书.mht
 
 [INFOTYPES]
 

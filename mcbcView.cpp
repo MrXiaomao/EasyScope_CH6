@@ -82,9 +82,13 @@ int	yBaseLine=0;
 extern	int	nCurWave;
 extern	int nWaveRepeat;
 extern	double   HV_k,HV_b,TH_k,TH_b;
-extern	bool	bRevBegin,bRevEnd;
+extern	bool	bRevBegin[3],bRevEnd[3];
 extern	bool	bWaveDisp[6];
 COLORREF adcColor[6];
+extern	bool	bWaitHardware;
+extern	bool	bWaitSoftware;
+extern	bool	bWaveShort;
+
 /////////////////////////////////////////////////////////////////////////////
 // CMcbcView
 
@@ -111,7 +115,7 @@ BEGIN_MESSAGE_MAP(CMcbcView, CView)
 	ON_WM_DESTROY()
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_START, OnUpdateButtonStart)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_STOP, OnUpdateButtonStop)
-	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CLEAR, OnUpdateButtonClear)
+	ON_UPDATE_COMMAND_UI(ID_MENU_CLEAR, OnUpdateButtonClear)
 	ON_WM_LBUTTONDBLCLK()
 	ON_COMMAND(ID_TIGGER_START, OnTiggerStart)
 	ON_COMMAND(ID_MENU_FIND_PEAK, OnMenuFindPeak)
@@ -167,6 +171,8 @@ CMcbcView::CMcbcView()
 	adcColor[3]=RGB(255,255,0);
 	adcColor[4]=RGB(255,0,255);
 	adcColor[5]=RGB(0,255,255);
+	for(int i=0;i<6;i++)
+		adcBrush[i].CreateSolidBrush(adcColor[i]);
 	wavePen[0].CreatePen(PS_SOLID,1,mredcolor);
 	wavePen[1].CreatePen(PS_SOLID,1,RGB(255,0,0));
 	wavePen[2].CreatePen(PS_SOLID,1,RGB(0,255,0));
@@ -278,6 +284,7 @@ void CMcbcView::OnDraw(CDC* pDC)
 	int nScrOrgX,nScrOrgY;
 	nScrOrgX=waveDisplay.nScrOrgX+160;
 	nScrOrgY=waveDisplay.nScrOrgY;
+/*
 //******************************************************
 	rect=CRect(CPoint(nScrOrgX,nScrOrgY-20*ky),
 		CSize(nScrWidth/6.,60*ky));
@@ -295,13 +302,13 @@ void CMcbcView::OnDraw(CDC* pDC)
 //**********************************************
 	rect=CRect(CPoint(nScrWidth/3.+nScrOrgX,nScrOrgY-20*ky),
 		CSize(nScrWidth/6.,60*ky));
-/*
+///
 	if(bAdcWorkOn[0])
 		str="×è¿¹£ºµÍ×è";
 	else
 		str="×è¿¹£º¸ß×è";
 	MemDC.DrawText(str,&rect,DT_SINGLELINE);
-*/
+//
 //***************************
 	rect=CRect(CPoint(nScrWidth/3.+nScrOrgX,nScrOrgY-20*ky),
 		CSize(nScrWidth/6.,60*ky));
@@ -317,20 +324,16 @@ void CMcbcView::OnDraw(CDC* pDC)
 	else
 		str.Format("´¥·¢×´Ì¬:´¥·¢");
 	MemDC.DrawText(str,&rect,DT_SINGLELINE);
+*/
 //************************************************************
-	rect=CRect(CPoint(nScrWidth-160,nScrHeight-80*ky),
+/*	rect=CRect(CPoint(nScrWidth-160,nScrHeight-80*ky),
 		CSize(nScrWidth/7.2,60*ky));
 	MemDC.SelectObject(&brush);
 	MemDC.Rectangle(&rect);
 	rect=CRect(CPoint(nScrWidth-140,nScrHeight-80*ky),
 		CSize(nScrWidth/7.2,30*ky));
 	float xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
-	else
-		xrange=500;
+	xrange=4000;
 	xrange=dispspm.spara.Horz/1000000.*xrange;
 
 	str.Format("X£º%5.1f us /Ã¿¸ñ",xrange/8.);
@@ -348,7 +351,7 @@ void CMcbcView::OnDraw(CDC* pDC)
 
 
 	MemDC.DrawText(str,&rect,DT_SINGLELINE|DT_VCENTER);
-
+*/
 //************************************************************
 	pDC->BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
 	MemBitmap.DeleteObject();
@@ -429,19 +432,18 @@ void CMcbcView::OnInitialUpdate()
 	dispspm.spara.IsLog=0;
 	dispspm.CursorChn=50;
 	int	xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+		xrange=8;
 	else
-		xrange=500;
-	str.Format("%d",int(xrange*dispspm.spara.Horz/(float)Gain[0]));
+		xrange=4000;
+	str.Format("%d",int(xrange*(dispspm.spara.Horz/(float)Gain[0])));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_X_RANGE)->SetWindowText(str);
 
 	if(dispspm.spara.IsLog==1)
 		str.Format("LOG");
 	else
-		str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+//		str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+		str.Format("%d",int(pow(2.,dispspm.spara.Vort)));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_Y_RANGE)->SetWindowText(str);
 
 
@@ -526,6 +528,27 @@ void CMcbcView::Paint(CDC *pDC)
 			dispspm.DispLabelX(pDC);//ÏÔÊ¾x×ø±ê±êÇ©
 			pDC->SelectObject(oldPen);
 		}
+		int yAdcGap=82;
+/*
+//adc1
+		pDC->SelectObject(&adcBrush[0]);
+		pDC->Rectangle(tmx1+50,0,tmx1+80,yAdcGap/2.);
+//adc2
+		pDC->SelectObject(&adcBrush[1]);
+		pDC->Rectangle(tmx1+50,yAdcGap,tmx1+80,yAdcGap+yAdcGap/2.);
+//adc3
+		pDC->SelectObject(&adcBrush[2]);
+		pDC->Rectangle(tmx1+50,2*yAdcGap,tmx1+80,2*yAdcGap+yAdcGap/2.);
+//adc4
+		pDC->SelectObject(&adcBrush[3]);
+		pDC->Rectangle(tmx1+50,3*yAdcGap,tmx1+80,3*yAdcGap+yAdcGap/2.);
+//adc5
+		pDC->SelectObject(&adcBrush[4]);
+		pDC->Rectangle(tmx1+50,4*yAdcGap,tmx1+80,4*yAdcGap+yAdcGap/2.);
+//adc6
+		pDC->SelectObject(&adcBrush[5]);
+		pDC->Rectangle(tmx1+50,5*yAdcGap,tmx1+80,5*yAdcGap+yAdcGap/2.);
+*/
 		if(!pDC->IsPrinting())
 			dispspm.paintbz=0;
 	}
@@ -775,13 +798,16 @@ void CMcbcView::OnLButtonDown(UINT nFlags, CPoint point)
 		m_pDlgBarState[0]->GetDlgItem(IDC_ADC1_V)->SetWindowText(str);
 	}
 	int xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+	{
+		xrange=8;
+		energy=xrange/4.*dispspm.CursorChn;
+	}
 	else
-		xrange=500;
-	energy=xrange/1000.*dispspm.CursorChn-xrange*1000/2.;
+	{
+		xrange=4000;
+		energy=xrange/1000.*dispspm.CursorChn;
+	}
 	str.Format("%8.0f",energy);
 	m_pDlgBarState[0]->GetDlgItem(IDC_STATIC_ENERGY)->SetWindowText(str);
 	dispspm.paintbz=1;
@@ -807,13 +833,12 @@ void CMcbcView::OnButtonExpand()
 		dispspm.spara.StartChn=0;
 
 	int	xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+		xrange=8;
 	else
-		xrange=500;
-	str.Format("%d",int(xrange*dispspm.spara.Horz/(float)Gain[0]));
+		xrange=4000;
+
+	str.Format("%d",int(xrange*(dispspm.spara.Horz/(float)Gain[0])));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_X_RANGE)->SetWindowText(str);
 /*
 	char temp[20];
@@ -841,13 +866,11 @@ void CMcbcView::OnButtonSmall()
 	if(dispspm.spara.StartChn<0)
 		dispspm.spara.StartChn=0;
 	int	xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+		xrange=8;
 	else
-		xrange=500;
-	str.Format("%d",int(xrange*dispspm.spara.Horz/(float)Gain[0]));
+		xrange=4000;
+	str.Format("%d",int(xrange*(dispspm.spara.Horz/(float)Gain[0])));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_X_RANGE)->SetWindowText(str);
 	dispspm.paintbz=1;
 	Invalidate(0);
@@ -862,10 +885,11 @@ void CMcbcView::OnBtnAddy()
 	ClearCursor();
 	dispspm.spara.IsLog=0;
 	dispspm.spara.Vort--;
-	if(dispspm.spara.Vort<10)
-		dispspm.spara.Vort=16;
+	if(dispspm.spara.Vort<6)
+		dispspm.spara.Vort=6;
 	Vort=dispspm.spara.Vort;
-	str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+//	str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+	str.Format("%d",int(pow(2.,dispspm.spara.Vort)));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_Y_RANGE)->SetWindowText(str);
 	dispspm.paintbz=1;
 	Invalidate(0);
@@ -880,10 +904,11 @@ void CMcbcView::OnBtnSuby()
 	ClearCursor();
 	dispspm.spara.IsLog=0;
 	dispspm.spara.Vort++;
-	if(dispspm.spara.Vort>16)
-		dispspm.spara.Vort=10;
+	if(dispspm.spara.Vort>12)
+		dispspm.spara.Vort=12;
 	Vort=dispspm.spara.Vort;
-	str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+//	str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+	str.Format("%d",int(pow(2.,dispspm.spara.Vort)));
 	m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_Y_RANGE)->SetWindowText(str);
 	dispspm.paintbz=1;
 	Invalidate(0);
@@ -982,6 +1007,7 @@ void CMcbcView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	case VK_UP:
 		OnBtnAddy();
+/*
 		if(Vort==16)
 			yBaseLine=0;
 		else if(Vort==15)
@@ -990,10 +1016,12 @@ void CMcbcView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			yBaseLine=7;
 		else
 			yBaseLine=9;
+*/
 		Invalidate(0);
 		break;
 	case VK_DOWN:
 		OnBtnSuby();
+/*
 		if(Vort==16)
 			yBaseLine=0;
 		else if(Vort==15)
@@ -1002,6 +1030,7 @@ void CMcbcView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			yBaseLine=7;
 		else
 			yBaseLine=9;
+*/
 		Invalidate(0);
 		break;
 	case VK_ADD:
@@ -1034,18 +1063,21 @@ void CMcbcView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	case 0x41:
 	case 'a':
-		yBaseLine++;
-		if(yBaseLine>19)
-			yBaseLine=19;
-		break;
-	case 'Z':
-	case 'z':
 		yBaseLine--;
 		if(yBaseLine<0)
 			yBaseLine=0;
+		Invalidate(0);
+		break;
+	case 'Z':
+	case 'z':
+		yBaseLine++;
+		if(yBaseLine>19)
+			yBaseLine=19;
+		Invalidate(0);
 		break;
 	case 76:
 		OnBtnLogy();
+		Invalidate(0);
 		break;
 	case VK_TAB:
 /*
@@ -1101,13 +1133,16 @@ void CMcbcView::DispCursor()
 	{
 		double energy;
 		int xrange;
-		if(mAdcGain==1)
-			xrange=4000;
-		else if(mAdcGain==2)
-			xrange=160;
+		if(bWaveShort)
+		{
+			xrange=8;
+			energy=xrange/4.*dispspm.CursorChn;
+		}
 		else
-			xrange=500;
-		energy=xrange/1000.*dispspm.CursorChn-xrange*1000/2.;
+		{
+			xrange=4000;
+			energy=xrange/1000.*dispspm.CursorChn;
+		}
 		str.Format("%8.0f",energy);
 		m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_ENERGY)->SetWindowText(str);
 	}
@@ -1266,8 +1301,11 @@ void CMcbcView::OnMenuClearroi()
 
 void CMcbcView::OnMenuClear() 
 {
-//	for(int i=0;i<MaxChannel;i++)
-//		pAdcBuf[viewNum][i] = 0;
+	int i,j;
+	for(i=0;i<6;i++)
+		for(j=0;j<1000000;j++)
+//			pAdcBuf[i][j]=(i+1)*10000-5000;
+			pAdcBuf[i][j]=2048;
 	dispspm.paintbz=1;
 	ClearCursor();
 	Invalidate(0);
@@ -1447,7 +1485,8 @@ void CMcbcView::OnBtnAuto()
 	{
 		dispspm.spara.Vort=log(double(maxData))/log(2.)+1;
 		Vort=dispspm.spara.Vort;
-		str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+//		str.Format("%d",int(pow(2.,dispspm.spara.Vort)*TH_k+TH_b));
+		str.Format("%d",int(pow(2.,dispspm.spara.Vort)));
 		m_pDlgBarState[viewNum]->GetDlgItem(IDC_STATIC_Y_RANGE)->SetWindowText(str);
 		dispspm.paintbz=1;
 		Invalidate(0);
@@ -1457,7 +1496,7 @@ void CMcbcView::OnBtnAuto()
 
 void CMcbcView::OnUpdateButtonClear(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(transbz[viewNum]);
+	pCmdUI->Enable(!bWaitHardware&&!bWaitSoftware);
 }
 void  CMcbcView::SetupLevel() 
 {
@@ -1767,5 +1806,5 @@ void CMcbcView::SetRoiMenu()
 }
 void CMcbcView::OnUpdateForce(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!bRevBegin);
+	pCmdUI->Enable(!bRevBegin[0]&&!bRevBegin[1]&&!bRevBegin[2]);
 }

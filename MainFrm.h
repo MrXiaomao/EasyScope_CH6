@@ -10,7 +10,6 @@
 #endif // _MSC_VER > 1000
 #include "DisplaySpm.h"
 #include "define.h"
-#include "DlgAmp.h"
 class CMainFrame : public CMDIFrameWnd
 {
 	DECLARE_DYNAMIC(CMainFrame)
@@ -55,7 +54,7 @@ protected:  // control bar embedded members
 	bool	bFirst;
 	CString	m_output;
 // Generated message map functions
-protected:
+public:
 	CStatic m_dlgbarDate;
 	void	AdcChange();
 	void	OpenRS232();
@@ -65,21 +64,20 @@ protected:
 	int		nReceiveVnum;
 	int		nSendComByte;
 	int		nSendComLen;
-	void	SendData();
+	void	SendData(int i);
 	int		ReadCommData(HANDLE hCom,BYTE *m_RxData);
 	void	ReceiveData();
-	void	ReceiveDataWave();
-	void	ReceiveDataWaveTCP(int iClientSock);
-	void	ReceiveDataWaveTCP2(int iClientSock);
+	void	ReceiveDataWave(int nTCP );
+	void	ReceiveDataWaveTCP(int nTCP);
+	void	ReceiveDataWaveTCP2(int nTCP);
 	int		ReadTCPData(int iClientSock,BYTE *m_RxData);
-	void	initTCP();
+	void	initTCP(int nTCP,bool &bTCPIPOK);
 	int		getCount(int ch);
 	void	setWaveMode(bool bShortWave,bool bHardware,bool bCh1);
 
 	bool Transfer(HANDLE* hDev1, HANDLE* hDev2);
 	void DoTimerAuto();
 	void SetSampleRate(int n);//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  7.8M
-	CDlgAmp *pDlgAmp;
 	HICON m_hIcon;
 	void Init();
 	//{{AFX_MSG(CMainFrame)
@@ -169,12 +167,12 @@ public:
 	afx_msg void OnBnClickedCalCount();
 	afx_msg void OnCalCount();
 	afx_msg void OnBnClickedRadioWaveShort();
-	afx_msg void OnBnClickedRadioWaveLong();
 	afx_msg void OnBnClickedRadioWaveShort2();
 	void OnUpdateRun(CCmdUI* pCmdUI);
 	void OnUpdateStop(CCmdUI* pCmdUI);
 
 	afx_msg void On32871();
+	afx_msg void OnMenu();
 };
 
 /////////////////////////////////////////////////////////////////////////////

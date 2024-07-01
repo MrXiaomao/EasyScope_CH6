@@ -26,10 +26,11 @@
 #include <conio.h>
 #include "Mmsystem.h"
 #include "DlgAutoSetup.h"
-#include "DlgAmp.h"
+#include "DlgHVSet.h"
 #include "DlgGuass.h"
 #include "DlgBaseLine.h"
 #include "DlgSetLD.h"
+#include "DlgSampleRateSet.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -79,7 +80,7 @@ char	strCom[10][5];
 int		nComx;
 BYTE		m_TxData[200];
 BYTE		*m_RxData;
-BYTE		*m_RxDataBuf;
+BYTE		*m_RxDataBuf[3];
 bool	bRS232,bReceiveEnd;
 CByteArray	inWaveBuf;
 int timer100ms;
@@ -108,7 +109,7 @@ BOOL	bStart;
 bool	bFirstStart,bFirstStop;
 bool	bAdcSet[3];//bAdcSet[0]: 0  直流  1 交流    bAdcSet[1]: 0 同向   1 反向   bAdcSet[2]:0 移码  1 补码
 int		fLD;//阈值
-unsigned short  nHV; //高压
+unsigned short  nHV[3]; //高压
 unsigned short   mHV;//高压限值
 int		Vort;
 _int64   startAbsTime;
@@ -124,7 +125,7 @@ bool bWaitTriger;
 int	nCurWave;
 int nWaveRepeat;
 bool	bSendSingle;
-bool	bHVOpen;
+bool	bHVOpen=0;
 int		fLD2;//基线
 double   HV_k,HV_b,TH_k,TH_b;
 char	password[20];
@@ -142,27 +143,35 @@ CDlgGuass * pDlgGuassFit;
 #define BACKLOG 10
 #define TRUE 1
 #define MAXDATASIZE 16384022
-int		iClientSock;
+int		iClientSock[3];
 struct	sockaddr_in ServerAddr;
-bool	bTCPIPOK;
-char serveIP[20]="192.168.10.16";
+bool	bTCPIPOK[3];
+char serveIP[3][20]={"192.168.10.15","192.168.10.16","192.168.10.17"};
 //char serveIP[20]="127.0.0.1";
-int		nCurRevLen,nPreRevLen;
-int		remainRevLen;//上次接收数据未处理的剩余数据长度
-bool	bRevBegin,bRevEnd;
-int		nPreDispLen;
+int		nCurRevLen[3],nPreRevLen[3];
+bool	bRevBegin[3];
+int		nPreDispLen[3];
 bool	bWaveDisp[6];
 //float	fLDWave[6]={34000,34000,34000,34000,34000,34000};
 bool	bWaveShort;
 bool	bHardware;
 bool	bWaitHardware;
+bool	bWaitSoftware;
 float	fLDWave[6];
+bool	bWaitWave[3];
+int		nReceiveWaveLen[3];
+bool	bRxEnd[3];
+int		mPeakPoint;//寻峰连续上升和下降点数
+int		nWaveStart[3];//
+bool	bFirstSoft=1;
+unsigned char cbaseLine[80];
 
-void WriteFileTCP(int iClientSock,BYTE * m_TxData,int toBeWritten, unsigned long& lpnumber)
+void WriteFileTCP(int nTCP,BYTE * m_TxData,int toBeWritten, unsigned long& lpnumber)
 {
 //	 lpnumber=send( iClientSock, (char *)m_TxData,toBeWritten, 0);
-	if(bTCPIPOK)
-		lpnumber = sendto( iClientSock, (char *)m_TxData,toBeWritten, 0, ( struct sockaddr * ) & ServerAddr, sizeof( struct sockaddr ) );
+	if(bTCPIPOK[nTCP])
+		 lpnumber=send( iClientSock[nTCP], (char *)m_TxData,toBeWritten, 0);
+//		lpnumber = sendto( iClientSock[nTCP], (char *)m_TxData,toBeWritten, 0, ( struct sockaddr * ) & ServerAddr, sizeof( struct sockaddr ) );
 	else
 		lpnumber=0;
 }
@@ -175,7 +184,8 @@ void CALLBACK TimeProc(UINT wTimerId,UINT msg,DWORD dwUser,DWORD dw1,DWORD dw2)
 		pWnd->DoTimer();
 
 }
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////
+//////////////////////////////////////////////////
 // CMainFrame
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWnd)
 
@@ -215,7 +225,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_MENUITEM_AC, OnMenuitemAc)
 	ON_COMMAND(ID_MENUITEM_SHIFT_CODE, OnMenuitemShiftCode)
 	ON_COMMAND(ID_MENUITEM_COMP_CODE, OnMenuitemCompCode)
-	ON_COMMAND(ID_MENUITEM_SET_LD, OnMenuitemSetLd)
+	ON_COMMAND(ID_MENUITEM_SET_LD, &CMainFrame::OnMenuitemSetLd)
 	//}}AFX_MSG_MAP
 
 	ON_COMMAND(ID_MENU_AUTO, &CMainFrame::OnMenuAuto)
@@ -250,9 +260,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_BN_CLICKED(IDC_CAL_COUNT, &CMainFrame::OnBnClickedCalCount)
 	ON_COMMAND(ID_CAL_COUNT, &CMainFrame::OnCalCount)
 	ON_BN_CLICKED(IDC_RADIO_WAVE_SHORT, &CMainFrame::OnBnClickedRadioWaveShort)
-	ON_BN_CLICKED(IDC_RADIO_WAVE_LONG, &CMainFrame::OnBnClickedRadioWaveLong)
 	ON_BN_CLICKED(IDC_RADIO_WAVE_SHORT2, &CMainFrame::OnBnClickedRadioWaveShort2)
 	ON_COMMAND(ID_32871, &CMainFrame::On32871)
+	ON_COMMAND(ID_Menu, &CMainFrame::OnMenu)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -278,13 +288,17 @@ CMainFrame::CMainFrame()
 	nReceiveNum=0;
 	char t1[10]="北";
 	m_RxData = new BYTE[MAXDATASIZE];
-	m_RxDataBuf= new BYTE[MAXDATASIZE];
+	for(i=0;i<3;i++)
+		m_RxDataBuf[i]= new BYTE[MAXDATASIZE];
 	CFile mfile;
 	char temp[160];
 	bStopWave=0;
 	GetCurrentDirectory(MAX_PATH,curDirectory);
-	nCurRevLen=0;
-	nPreRevLen=0;
+	for(i=0;i<3;i++)
+	{
+		nCurRevLen[i]=0;
+		nPreRevLen[i]=0;
+	}
 /*
 	sprintf(temp,"%s\\mcb.dat",curDirectory);
 	if(mfile.Open(temp,CFile::modeRead))
@@ -338,17 +352,17 @@ CMainFrame::CMainFrame()
 	Gain[3] = MaxChannel;
 	for(i=0;i<8;i++)
 	{
-		pAdcBuf[i]=new long[2000000];
+		pAdcBuf[i]=new long[2100000];
 //		memset(pAdcBuf[i],0,2000000*sizeof(long));
 	}
 	for(i=0;i<1000000;i++)
 	{
-		pAdcBuf[0][i]=5000+i/100;
-		pAdcBuf[1][i]=10000+i/100;
-		pAdcBuf[2][i]=15000+i/100;
-		pAdcBuf[3][i]=20000+i/100;
-		pAdcBuf[4][i]=25000+i/100;
-		pAdcBuf[5][i]=30000+i/100;
+		pAdcBuf[0][i]=500;
+		pAdcBuf[1][i]=1000;
+		pAdcBuf[2][i]=1500;
+		pAdcBuf[3][i]=2000;
+		pAdcBuf[4][i]=2500;
+		pAdcBuf[5][i]=3000;
 	}
 	for(i=0;i<8;i++)
 	{
@@ -368,22 +382,23 @@ CMainFrame::CMainFrame()
 	pumpOn=0;
 	alarmOn=0;
 	paperOn=0;
-//	pDlgAmp = new CDlgAmp;
 	pDlgGuassFit =new CDlgGuass;
 	adcStartTransCh=0;
 	adcNum=0;
 	nCurWave=0;
 	bWaitHardware=0;
+	bWaitSoftware=0;
 }
 
 CMainFrame::~CMainFrame()
 {
-	delete []m_RxData;
-	delete []m_RxDataBuf;
-	if(m_pDlgBar) 
-		delete m_pDlgBar;
 	CFile mfile;
 	int i,j,maxj;
+	delete []m_RxData;
+	for(i=0;i<3;i++)
+		delete []m_RxDataBuf[i];
+	if(m_pDlgBar) 
+		delete m_pDlgBar;
 	for(i=0;i<1;i++)
 	{
 		energyKedu1[i].Enum=energyKedu[i].Enum;
@@ -427,24 +442,25 @@ CMainFrame::~CMainFrame()
 		mfile.Write(bAdcSet,sizeof(bAdcSet));
 		mfile.Write(&fLD,sizeof(fLD));
 		mfile.Write(&Vort,sizeof(Vort));
-		mfile.Write(&nHV,sizeof(nHV));
+		mfile.Write(nHV,sizeof(nHV));
 		mfile.Write(&nWaveRepeat,sizeof(nWaveRepeat));
 		mfile.Write(bWaveDisp,sizeof(bWaveDisp));
 		mfile.Write(&bWaveShort,sizeof(bWaveShort));
 		mfile.Write(fLDWave,sizeof(fLDWave));
+		mfile.Write(&mPeakPoint,sizeof(mPeakPoint));
 		mfile.Close();
 
 	
 	mfile.Close();
 	}
-	if(bTCPIPOK)
+	for(i=0;i<3;i++)
+	if(bTCPIPOK[i])
 	{
-		closesocket( iClientSock );
+		closesocket( iClientSock[i] );
 		WSACleanup( );
 	}
 	delete 	pDlgRoIDisplay;
 	delete pDlgSetRoi;
-//	delete pDlgAmp;
 	delete pDlgGuassFit;
 }
 
@@ -489,14 +505,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CStdioFile mfile;
 	CString strPara;
-	if(mfile.Open("para.dat",CFile::modeRead)!=NULL)
+	if(mfile.Open("para.dat",CFile::modeRead|CFile::typeText)!=NULL)
 	{
 		mfile.ReadString(strPara);
 		mfile.ReadString(strPara);
 		sscanf(strPara.GetBuffer(80),"%lf %lf",&HV_k,&HV_b);
 		mfile.ReadString(strPara);
 		sscanf(strPara.GetBuffer(80),"%lf %lf",&TH_k,&TH_b);
-		mfile.ReadString(password,20);
+		mfile.ReadString(strPara);
+		strcpy(password,strPara.GetBuffer(20));
+		mfile.ReadString(strPara);
+		sscanf(strPara.GetBuffer(80),"%x %x %x %x %x %x %x %x %x %x %x %x",
+			&cbaseLine[0],&cbaseLine[1],&cbaseLine[2],&cbaseLine[3],
+			&cbaseLine[4],&cbaseLine[5],&cbaseLine[6],&cbaseLine[7],
+			&cbaseLine[8],&cbaseLine[9],&cbaseLine[10],&cbaseLine[11]);
 		mfile.Close();
 	}
 
@@ -545,43 +567,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 //		else
 //		MessageBox("计数器加载成功!");
 	}
-//	pDlgAmp->Create(IDD_DLG_AMP);
 	pDlgGuassFit->Create(IDD_DLG_GAUSS);
-	if(bWaveShort)
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_RADIO_WAVE_SHORT)))->SetCheck(1);
-	else
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_RADIO_WAVE_LONG)))->SetCheck(1);
-/*
-	if(bWaveDisp[0])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH1)))->SetCheck(1);
-	if(bWaveDisp[1])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH2)))->SetCheck(1);
-	if(bWaveDisp[2])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH3)))->SetCheck(1);
-	if(bWaveDisp[3])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH4)))->SetCheck(1);
-	if(bWaveDisp[4])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH5)))->SetCheck(1);
-	if(bWaveDisp[5])	
-		((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH6)))->SetCheck(1);
-*/
-	initTCP();
+	bTCPIPOK[0]=0;
+	bTCPIPOK[1]=0;
+	bTCPIPOK[2]=0;
+	initTCP(0,bTCPIPOK[0]);
+	initTCP(1,bTCPIPOK[1]);
+	initTCP(2,bTCPIPOK[2]);
 
 	Init();
-	setWaveMode(bWaveShort,0,0);
-	OnMenuBaseline();  
-	OnMenuitemSetLd();
-//	OnMenuSingle();
-//	bWaitTriger=1;
-//	OnMenuNormal();
-	OnMenuitemForward();
-	if(bAdcWorkOn[0])
-		OnMenu50();
-	else
-		OnMenu10k();
 	mAdcGain=1;
-	SetSampleRate(mAdcGain);
 	bWaitTriger=0;
+	char szLD[20];
+	sprintf(szLD,"%d",fLD);
+	m_pDlgBar->SetDlgItemText(IDC_EDIT_LD,szLD);
 
 	return 0;
 }
@@ -642,6 +641,7 @@ void CMainFrame::OnRadioHardWare()
 }
 void CMainFrame::OnRadioBuffer() 
 {
+	/*
 	int i,nMca;
 	if(bDispMca[0])
 		nMca=0;
@@ -659,8 +659,8 @@ void CMainFrame::OnRadioBuffer()
 		stime= w1[i]->curTime.Format("%X");
 		m_pDlgBar->SetDlgItemText(IDC_STATIC_TIME2,stime.GetBuffer(20));
 		w1[i]->Invalidate(0);
-
 	bDispBuffer=1;
+	*/
 }
 
 void CMainFrame::DoTimer1s() 
@@ -722,21 +722,18 @@ void CMainFrame::AdcChange()
 //	MaxChannel = AdcGain;
 	CString str;
 	int	xrange;
-	if(mAdcGain==1)
-		xrange=100;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+		xrange=8;
 	else
-		xrange=500;
+		xrange=4000;
 
-	str.Format("%d",xrange);
 	w1[0]->dispspm.spara.StartChn = 0;
-	for(int i=0;i<1;i++)
 	{
-		w1[i]->dispspm.spara.Horz = Gain[i];
-		w1[i]->dispspm.spara.StartChn = 0;
-		m_pDlgBarState[i]->GetDlgItem(IDC_STATIC_X_RANGE)->SetWindowText(str);
-		w1[i]->Invalidate(0);
+		w1[0]->dispspm.spara.Horz = Gain[0];
+		w1[0]->dispspm.spara.StartChn = 0;
+		str.Format("%d",int(xrange*(w1[0]->dispspm.spara.Horz/(float)Gain[0])));
+		m_pDlgBarState[0]->GetDlgItem(IDC_STATIC_X_RANGE)->SetWindowText(str);
+		w1[0]->Invalidate(0);
 	}
 }
 void CMainFrame::OnUpdateAdc512(CCmdUI* pCmdUI) 
@@ -827,6 +824,7 @@ void CMainFrame::OnTimePreset() //基线刻度
 void CMainFrame::OnMenuMcatobuf() 
 {
 	// TODO: Add your command handler code here
+/*
 	int i;
 	for(i=0;i<1;i++)
 	{
@@ -838,6 +836,7 @@ void CMainFrame::OnMenuMcatobuf()
 		bufStartTime[i]=hardSatrtTime[i];
 		w1[i]->Invalidate(0);
 	}
+*/
 }
 
 void CMainFrame::OnMenuEkedu() 
@@ -858,7 +857,7 @@ void CMainFrame::OnMenuEkedu()
 void CMainFrame::OnMenuHelp() 
 {
 	// TODO: Add your command handler code here
-//	HtmlHelp("help\\mca1help.chm",HH_DISPLAY_TOPIC);	
+	::HtmlHelp(NULL,"help\\mca1help.chm",HH_DISPLAY_TOPIC,0);	
 	
 }
 
@@ -878,15 +877,15 @@ void CMainFrame::OnMenuRs232Set()
 		if(bOpenRs232)
 		{
 		Init();
-		OnMenuBaseline();  
-		OnMenuitemSetLd();
-		OnMenuNormal();
-		OnMenuitemForward();
-		if(bAdcWorkOn[0])
-			OnMenu50();
-		else
-			OnMenu10k();
-		SetSampleRate(mAdcGain);
+//		OnMenuBaseline();  
+//		OnMenuitemSetLd();
+//		OnMenuNormal();
+//		OnMenuitemForward();
+//		if(bAdcWorkOn[0])
+//			OnMenu50();
+//		else
+//			OnMenu10k();
+//		SetSampleRate(mAdcGain);
 		}
 		//CloseHandle(hCom);
 //		m_pDlgBar->SetDlgItemText(IDC_STATIC_COM,strCom[nComx]);
@@ -908,208 +907,223 @@ void CMainFrame::OnMenuRs232Set()
 void CMainFrame::ReceiveData()
 {
 }
-void CMainFrame::ReceiveDataWave()
+void CMainFrame::ReceiveDataWave(int nTCP)//读取查询高压返回
 {
-int		i;
-unsigned long nRxLength;
-BYTE	checksum;
-bool	bWave=0;
-	nRxLength = ReadCommData(hCom,m_RxData);
-	if(nRxLength<=30)
+	int nRxLength;
+	int i;
+	BYTE *pData;
+	CString str;
+	pData=m_RxDataBuf[nTCP];
+	nRxLength=ReadTCPData(iClientSock[nTCP],m_RxData);
+	if(nRxLength<20)
 	{
 		nReceiveNum++ ;
-		if(nReceiveNum>=3)
+		if(nReceiveNum>=5)
 		{
-//			usbState="RS232通讯错误!";
+//			usbState="TCP/IP通讯错误!";
 			nReceiveNum = 0;
 
 		}
-		return;
 	}
 	else 
 	{
-		int j=0;
-		bWaitTriger=0;
-		nReceiveNum=0;
-//        int k1=inBuf.GetSize()/3;
-		int k1=(nRxLength-16)/2;
-		timer100ms=0;
-
-//		if(k1>=1024)
-		{
-
-			int adcNum0=m_RxData[9];
-			int adcStartTransCh0=m_RxData[10];
-			if(adcStartTransCh0>3)
-				adcStartTransCh0=3;
- 		    int nStart=0;
-			
-			if(adcNum0>3)
-				adcNum0=3;
-			short byteLen;
-			BYTE bdata[300];
-			BYTE b0,b1,b3,b4;
-			int waveLen=4096;
-			for(i=0;i<4096;i++)
-			{
-				b0=m_RxData[i];
-				b1=m_RxData[i+1];
-				if(b0==0x11&&b1==0x22)
-				{
-				b3=m_RxData[i+waveLen*2+14];
-				b4=m_RxData[i+waveLen*2+15];
-				if(b3==0xaa&&b4==0xbb)
-				{
-					bWave=1;
-					break;
-				}
-				}
-			}
-			nStart=i;
-			if(bWave)
-			{
-				for(i=0;i<waveLen;i++)
-				{
-						pAdcBuf[nCurWave][i]=m_RxData[2*i+15+nStart]+256*m_RxData[2*i+14+nStart];
-				}
-				nCurWave++;
-				if(nCurWave>=32)
-					nCurWave=0;
-				w1[0]->Invalidate(0);
-			}
-			bReceiveEnd=1;
-			usbState="RS232通讯正常!";
-
-
-		}
+			usbState="TCP/IP通讯正常!";
 	}
 }
-void CMainFrame::ReceiveDataWaveTCP2(int iClientSock) //长波形
+void CMainFrame::ReceiveDataWaveTCP2(int nTCP) //长波形
 {
 	int nRxLength;
-	int i,nRevBegin;
-	nRxLength=ReadTCPData(iClientSock,m_RxData);
+	int i;
+	BYTE *pData;
+	BYTE *pData2;
+	BYTE tempd[200];
+	CString str;
+	pData=m_RxDataBuf[nTCP];
+	nRxLength=ReadTCPData(iClientSock[nTCP],m_RxData);
 	if(nRxLength>0)
 	{
-		if(!bRevBegin)
+		usbState="TCP/IP通讯正常!";
+		nReceiveNum=0;
+/*
+		if(bWaitHardware) //禁止继续触发
 		{
-			if(nRxLength>22)
+			m_TxData[0]=0x12;
+			m_TxData[1]=0x34;
+			m_TxData[2]=0x0f;
+			m_TxData[3]=0x0;
+			m_TxData[4]=0x04;
+			m_TxData[5]=0x0;
+			m_TxData[6]=0x0;
+			m_TxData[7]=0x0;
+			m_TxData[8]=0x0;
+			m_TxData[9]=0xab;
+			m_TxData[10]=0xcd;
+			toBeWritten=11;
+			WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		}
+*/
+		if(bWaitWave[nTCP])
+		{
+			memcpy(pData+nReceiveWaveLen[nTCP],m_RxData,nRxLength);
+			nReceiveWaveLen[nTCP]+=nRxLength;
+			if(!bRevBegin[nTCP])
 			{
-				nRevBegin=nRxLength-1;
-				for(i=0;i<nRxLength-1;i++)
-					if(m_RxData[i]==0x11&&m_RxData[i+1]==0x22)
-					{
-						bRevBegin=1;
-						nRevBegin=i+2;
-						break;
-					}
-				if(bRevBegin)
+				if(nReceiveWaveLen[nTCP]>30)
 				{
-					nCurRevLen=(nRxLength-nRevBegin-18)/8;
-					remainRevLen=(nRxLength-nRevBegin-18)%8;
-					if(nCurRevLen>0)
+					i=0;
+//					for(i=0;i<1000;i++)
 					{
-						for(i=0;i<nCurRevLen;i++)
+//						if(pData[i]==0x11&&pData[i+1]==0x22&&pData[i+6]!=0xff&&pData[i+7]!=0xff)
 						{
-							pAdcBuf[0][i*2]=m_RxData[i*8+20]*256+m_RxData[i*8+21]-20000;
-							pAdcBuf[0][i*2+1]=m_RxData[i*8+22]*256+m_RxData[i*8+23]-20000;
-							pAdcBuf[1][i*2]=m_RxData[i*8+24]*256+m_RxData[i*8+25];
-							pAdcBuf[1][i*2+1]=m_RxData[i*8+26]*256+m_RxData[i*8+27];
+							bRevBegin[nTCP]=1;
+							nWaveStart[nTCP]=i;
+							pData2=pData+nWaveStart[nTCP];
+//							break;
 						}
-						w1[0]->Invalidate(0);
-						nPreRevLen=nCurRevLen;
 					}
-					for(i=0;i<remainRevLen;i++)
-						m_RxDataBuf[i]=m_RxData[nRxLength-remainRevLen+i];
-	//				memcpy(m_RxDataBuf,m_RxData+nRxLength-remainRevLen,remainRevLen);
-					nPreDispLen=nRxLength-20;
-					memcpy(m_RxDataBuf,m_RxData+20,nRxLength-20);
+					if(bRevBegin[nTCP])
+					{
+						nCurRevLen[nTCP]=(nReceiveWaveLen[nTCP]-20-nWaveStart[nTCP])/8;  //当前接收的波形点数
+						if(nCurRevLen[nTCP]>0)
+						{
+							for(i=0;i<nCurRevLen[nTCP];i++)
+							{
+								pAdcBuf[nTCP*2+0][nPreRevLen[nTCP]*2+i*2+1]=(pData2[i*8+20]*256+pData2[i*8+21])/16.;
+								pAdcBuf[nTCP*2+0][nPreRevLen[nTCP]*2+i*2]=(pData2[i*8+22]*256+pData2[i*8+23])/16.;
+								pAdcBuf[nTCP*2+1][nPreRevLen[nTCP]*2+i*2+1]=(pData2[i*8+24]*256+pData2[i*8+25])/16.;
+								pAdcBuf[nTCP*2+1][nPreRevLen[nTCP]*2+i*2]=(pData2[i*8+26]*256+pData2[i*8+27])/16.;
+
+							}
+							w1[0]->Invalidate(0);
+							nPreRevLen[nTCP]=nCurRevLen[nTCP]; //已经接收的波形点数
+						}
+						nPreDispLen[nTCP]=nRxLength;  
+					}
 				}
+
+			}
+			else
+			{
+				memcpy(pData+nReceiveWaveLen[nTCP],m_RxData,nRxLength);
+				nCurRevLen[nTCP]=nRxLength/8;
+				BYTE *pRxData=pData+nPreRevLen[nTCP]*8+nWaveStart[nTCP];
+				for(i=0;i<nCurRevLen[nTCP];i++)
+				{
+					pAdcBuf[nTCP*2+0][nPreRevLen[nTCP]*2+i*2+1]=(pRxData[i*8+20]*256+pRxData[i*8+21])/16.;
+					pAdcBuf[nTCP*2+0][nPreRevLen[nTCP]*2+i*2]=(pRxData[i*8+22]*256+pRxData[i*8+23])/16.;
+					pAdcBuf[nTCP*2+1][nPreRevLen[nTCP]*2+i*2+1]=(pRxData[i*8+24]*256+pRxData[i*8+25])/16.;
+					pAdcBuf[nTCP*2+1][nPreRevLen[nTCP]*2+i*2]=(pRxData[i*8+26]*256+pRxData[i*8+27])/16.;
+				}
+				w1[0]->Invalidate(0);
+				nPreRevLen[nTCP]+=nCurRevLen[nTCP];
+				nPreDispLen[nTCP]=nPreDispLen[nTCP]+nRxLength;
+			}	
+			if(nReceiveWaveLen[nTCP]>=4096022)
+			{
+				bWaitWave[nTCP]=0;
+				bRevBegin[nTCP]=0;
+				OnBnClickedCalCount();
+			}
+			if((nReceiveWaveLen[0]>=4096022)&&(nReceiveWaveLen[1]>=4096022)&&(nReceiveWaveLen[2]>=4096022))
+			{
+				bWaitHardware=0;
+				bWaitSoftware=0;
 			}
 		}
 		else
+			nReceiveWaveLen[nTCP]+=nRxLength;
+		if(nRxLength>0)
 		{
-			memcpy(m_RxDataBuf+nPreDispLen,m_RxData,nRxLength);
-			nCurRevLen=nRxLength/8;
-			if(nCurRevLen+nPreRevLen>5e5)
-			{
-				nCurRevLen=1e6-nPreRevLen;
-				bRevBegin=0;
-				bWaitHardware=0;
-				OnBnClickedCalCount();
-			}
-			BYTE *pRxData=m_RxDataBuf+nPreRevLen*8;
-			for(i=0;i<nCurRevLen;i++)
-			{
-				pAdcBuf[0][nPreRevLen*2+i*2]=pRxData[i*8]*256+pRxData[i*8+1]-20000;
-				pAdcBuf[0][nPreRevLen*2+i*2+1]=pRxData[i*8+2]*256+pRxData[i*8+3]-20000;
-				pAdcBuf[1][nPreRevLen*2+i*2]=pRxData[i*8+4]*256+pRxData[i*8+5];
-				pAdcBuf[1][nPreRevLen*2+i*2+1]=pRxData[i*8+6]*256+pRxData[i*8+7];
-			}
-			w1[0]->Invalidate(0);
-			m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nRxLength);
-			nPreRevLen+=nCurRevLen;
-			nPreDispLen=nPreDispLen+nRxLength;
-		}	
+			str.Format("%7d,%7d,%7d",nReceiveWaveLen[0],nReceiveWaveLen[1],nReceiveWaveLen[2]);
+			m_pDlgBarState[0]->SetDlgItemTextA(IDC_REV_LEN,str);
+		}
 	}
-	pAdcBuf[0][0]=nRxLength;
-//	m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nRxLength);
 }
 
-void CMainFrame::ReceiveDataWaveTCP(int iClientSock) //短波形
+void CMainFrame::ReceiveDataWaveTCP(int nTCP) //短波形
 {
 	static int recLen;
 	int nRxLength;
 	int i,nRevBegin;
-	bool	bRxEnd=0;
-	BYTE	temp[8300];
-	nRxLength=ReadTCPData(iClientSock,m_RxData);
+	int		nCh;
+	CString str;
+	BYTE *pData,*pData2;
+	BYTE tempd[600];
+	pData=m_RxDataBuf[nTCP];
+	pData2=m_RxDataBuf[nTCP];
+	nRxLength=ReadTCPData(iClientSock[nTCP],m_RxData);
 	if(nRxLength>0)
 	{
-		if(!bRevBegin)
+		usbState="TCP/IP通讯正常!";
+		nReceiveNum=0;
+		if(bWaitWave[nTCP])
 		{
-			if(nRxLength>22)
+			memcpy(pData+nReceiveWaveLen[nTCP],m_RxData,nRxLength);
+			nReceiveWaveLen[nTCP]+=nRxLength;
+			if(nReceiveWaveLen[nTCP]>=16432)
 			{
-				nRevBegin=nRxLength-1;
-				for(i=0;i<nRxLength-1;i++)
-					if(m_RxData[i]==0x11&&m_RxData[i+1]==0x22)
-					{
-						bRevBegin=1;
-						nRevBegin=i+2;
-						recLen=nRxLength-nRevBegin+2;
-						break;
-					}
-					memcpy(m_RxDataBuf,m_RxData,nRxLength-nRevBegin+2);
-					nPreDispLen=nRxLength-nRevBegin+2;
-					m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nRxLength);
-					if(nPreDispLen>=8214)
-						bRxEnd=1;
-
+				bRxEnd[nTCP]=1;
+			}
+		}
+		if(nRxLength>600)
+		{
+			for(i=0;i<600;i++)
+			{
+				tempd[i]=m_RxData[i];
+				if(pData2[i]==0x11&&pData2[i+1]==0x22&&pData2[i+6]!=0xff&&pData2[i+7]!=0xff)
+				{
+					nWaveStart[nTCP]=i;
+					break;
 				}
 			}
-			else
+		}
+		if(bRxEnd[0]&&bRxEnd[1]&&bRxEnd[2])
+		{
+			for(i=0;i<3;i++)
 			{
-				memcpy(m_RxDataBuf+nPreDispLen,m_RxData,nRxLength);
-				nPreDispLen+=nRxLength;
-				if(nPreDispLen>=8214)
-					bRxEnd=1;
+				bRevBegin[i]=0;
+			}
+			bWaitWave[nTCP]=0;
+//			bWaitHardware=0;
+			bWaitSoftware=0;
+		}
+		if(bRxEnd[nTCP])
+		{
+			pData=m_RxDataBuf[nTCP]+nWaveStart[nTCP];
+			nCh=pData[7]-0x10;
+			for(i=0;i<4096;i++)
+			{
+				if(nCh==0)
+				{
+					pAdcBuf[nTCP*2][i]=pData[i*2+20]*256+pData[i*2+21];
+					pAdcBuf[nTCP*2+1][i]=pData[i*2+8192+44]*256+pData[i*2+8192+45];
+				}
+				else
+				{
+					pAdcBuf[nTCP*2+1][i]=pData[i*2+20]*256+pData[i*2+21];
+					pAdcBuf[nTCP*2][i]=pData[i*2+8192+44]*256+pData[i*2+8192+45];
+				}
+			}
+//			bRxEnd[nTCP]=0;
+			w1[0]->Invalidate(0);
+			m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nPreDispLen[nTCP]);
+		}
+		str.Format("%7d,%7d,%7d",nReceiveWaveLen[0],nReceiveWaveLen[1],nReceiveWaveLen[2]);
+		m_pDlgBarState[0]->SetDlgItemTextA(IDC_REV_LEN,str);
+	}
+	else
+	{
+		if(bRxEnd[0]&&bRxEnd[1]&&bRxEnd[2])
+		{
+			bWaitHardware=0;
+			for(int i=0;i<3;i++)
+			{
+				bRxEnd[i]=0;
+//				nReceiveWaveLen[i]=0;
+				nWaveStart[i]=0;
 			}
 		}
-	if(bRxEnd)
-	{
-		bRevBegin=0;
-		bWaitHardware=0;
-		memcpy(temp,m_RxDataBuf,8214);
-		for(i=0;i<4096;i++)
-		{
-			pAdcBuf[0][i]=m_RxDataBuf[i*2+20]*256+m_RxDataBuf[i*2+21];
-//			pAdcBuf[1][i]=m_RxDataBuf[4096+i*2]*256+m_RxDataBuf[4096+i*2+1];
-		}
-		w1[0]->Invalidate(0);
-		m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nPreDispLen);
 	}
-	pAdcBuf[0][0]=nRxLength;
-//	m_pDlgBarState[0]->SetDlgItemInt(IDC_REV_LEN,nRxLength);
 }
 int CMainFrame::ReadTCPData(int iClientSock,BYTE *m_RxData)
 {
@@ -1153,57 +1167,64 @@ int CMainFrame::ReadCommData(HANDLE hCom,BYTE *m_RxData)
 	return read;
 */
 }
-void CMainFrame::SendData()
+void CMainFrame::SendData(int i)//发送查询高压指令
 {
-	bool success = false;
-	DWORD written;
-	if(bTrans)
-	{
-		bTrans=0;
 		m_TxData[0]=0x12;
 		m_TxData[1]=0x34;
-//		m_TxData[2]=0x0f;
+		m_TxData[2]=0x0f;
+		m_TxData[3]=0x00;
+		m_TxData[4]=0x03;
+		m_TxData[5]=0x00;
+//		m_TxData[6]=0x08;//改为0x00,所有命令都不返回
+		m_TxData[6]=0x00;//改为0x00,所有命令都不返回
+		m_TxData[7]=0x00;
+		m_TxData[8]=0x00;
 		m_TxData[9]=0xab;
 		m_TxData[10]=0xcd;
 		toBeWritten=11;
-		WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
-	}
-/*
-	else
-	{
-		if(!bWaitTriger)
-		{
-			OnMenuSingle();
-			bWaitTriger=1;
-		}
-	}
-*/
+		WriteFileTCP(i,m_TxData,toBeWritten,lpnumber);
+		m_TxData[0]=0x12;
+		m_TxData[1]=0x34;
+		m_TxData[2]=0x0f;
+		m_TxData[3]=0x00;
+		m_TxData[4]=0x9a;
+		m_TxData[5]=0x00;
+		m_TxData[6]=0x82;
+		m_TxData[7]=0x00;
+		m_TxData[8]=0x03;
+		m_TxData[9]=0xab;
+		m_TxData[10]=0xcd;
+		WriteFileTCP(i,m_TxData,toBeWritten,lpnumber);
+		m_TxData[0]=0x12;
+		m_TxData[1]=0x34;
+		m_TxData[2]=0xab;
+		m_TxData[3]=0x00;
+		m_TxData[4]=0x9a;
+		m_TxData[5]=0x00;
+		m_TxData[6]=0x00;
+		m_TxData[7]=0x00;
+		m_TxData[8]=0x00;
+		m_TxData[9]=0xab;
+		m_TxData[10]=0xcd;
+		WriteFileTCP(i,m_TxData,toBeWritten,lpnumber);
+
 }
 void CMainFrame::DoTimer() 
 {
+	int i;
 	nTimerTick++;
-	bSendSingle=!bSendSingle;
-	if(bOpenRs232&&!bStopWave)
+	for(i=0;i<3;i++)
 	{
-		if(bSendSingle)
+		if(bTCPIPOK[i])
 		{
-			if(!bWaitTriger)
+			if(bWaitSoftware||bWaitHardware)
 			{
-				OnMenuSingle();
-				bWaitTriger=1;
+				if(bWaveShort)
+					ReceiveDataWaveTCP(i);  //短波形
+				else
+					ReceiveDataWaveTCP2(i); //长波形
 			}
 		}
-		else
-		{
-			ReceiveDataWave();
-		}
-	}
-	if(bTCPIPOK)
-	{
-		if(bWaveShort)
-			ReceiveDataWaveTCP(iClientSock);  //短波形
-		else
-			ReceiveDataWaveTCP2(iClientSock); //长波形
 	}
 	timer100ms++;
    if(timer100ms>9)
@@ -1212,6 +1233,14 @@ void CMainFrame::DoTimer()
    }
 	if(nTimerTick>=(1000/wTimerRes))
 	{
+		if(!bWaitSoftware&&!bWaitHardware)//查询网络
+		{
+			for(i=0;i<3;i++)
+			{
+ 				ReceiveDataWave(i);
+				SendData(i);
+			}
+		}
 		nTimerTick=0;
 		DoTimer1s();
 	}	
@@ -1464,18 +1493,6 @@ void CMainFrame::OnMenuSetC51()
 void CMainFrame::OnMenuAmplifier() 
 {
 	// TODO: Add your command handler code here
-//	if(dlg.DoModal()==IDOK)
-//	pDlgAmp->ShowWindow(SW_SHOW);
-/*
-	{
-		m_TxData[3]=0xa6;
-		m_TxData[4]=amplifier;
-		m_TxData[5]=0;
-		m_TxData[6]=0;
-		m_TxData[7]=0;
-		bTrans=1;
-	}
-*/
 }
 
 void CMainFrame::OnMenuFit() 
@@ -1556,7 +1573,7 @@ void CMainFrame::OnMenuitemDc()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 //	bTrans=1;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 	
 }
 
@@ -1577,7 +1594,7 @@ void CMainFrame::OnMenuitemAc()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 //	bTrans=1;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 	
 }
 void CMainFrame::OnMenuitemForward() 
@@ -1597,7 +1614,7 @@ void CMainFrame::OnMenuitemForward()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 //	bTrans=1;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 }
 
 void CMainFrame::OnMenuitemReverse() 
@@ -1616,7 +1633,7 @@ void CMainFrame::OnMenuitemReverse()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 //	bTrans=1;
 }
 
@@ -1637,7 +1654,7 @@ void CMainFrame::OnMenuitemShiftCode()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 //	bTrans=1;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 }
 
 void CMainFrame::OnMenuitemCompCode() 
@@ -1657,13 +1674,17 @@ void CMainFrame::OnMenuitemCompCode()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 //	bTrans=1;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+//	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
 }
 
 void CMainFrame::OnMenuitemSetLd() //调阈值
 {
 	// TODO: Add your command handler code here
+	char temp[20];
 	int fLD_DAC=(fLD-TH_b)/TH_k;
+	m_pDlgBar->GetDlgItemText(IDC_EDIT_LD,temp,20);
+	fLD=atoi(temp);
+	fLD_DAC=fLD;
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1676,12 +1697,14 @@ void CMainFrame::OnMenuitemSetLd() //调阈值
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
     m_TxData[3]=0x0;
-    m_TxData[4]=0x010;
+    m_TxData[4]=0x10;
     m_TxData[5]=0x06;
     m_TxData[6]=0x0;
     m_TxData[7]=fLD_DAC/256;
@@ -1689,7 +1712,13 @@ void CMainFrame::OnMenuitemSetLd() //调阈值
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+    m_TxData[4]=0x11;
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1702,8 +1731,9 @@ void CMainFrame::OnMenuitemSetLd() //调阈值
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
-	
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
 }
 void CMainFrame::Init()
 {
@@ -1719,12 +1749,47 @@ void CMainFrame::Init()
 		fgets(temp,200,fp);
 		sscanf(temp,"%x %x %x %x %x %x %x %x %x %x %x",&m_TxData[0],&m_TxData[1],&m_TxData[2],&m_TxData[3],&m_TxData[4],
 			&m_TxData[5],&m_TxData[6],&m_TxData[7],&m_TxData[8],&m_TxData[9],&m_TxData[10]);
+		m_TxData[11]=0x20;
 		toBeWritten=11;
-		WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+		if(num==6)
+		{
+			m_TxData[7]=cbaseLine[0];
+			m_TxData[8]=cbaseLine[1];
+		}
+		if(num==7)
+		{
+			m_TxData[7]=cbaseLine[2];
+			m_TxData[8]=cbaseLine[3];
+		}
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);//15号板
+		if(num==6)
+		{
+			m_TxData[7]=cbaseLine[4];
+			m_TxData[8]=cbaseLine[5];
+		}
+		if(num==7)
+		{
+			m_TxData[7]=cbaseLine[6];
+			m_TxData[8]=cbaseLine[7];
+		}
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);//16号板
+		if(num==6)
+		{
+			m_TxData[7]=cbaseLine[8];
+			m_TxData[8]=cbaseLine[9];
+		}
+		if(num==7)
+		{
+			m_TxData[7]=cbaseLine[10];
+			m_TxData[8]=cbaseLine[11];
+		}
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);//17号板
 		num++;
 		}
 	fclose(fp);	
 	}
+//	for(int i=0;i<3;i++)
+//		SendData(i);
 }
 
 void CMainFrame::OnMenuAuto()//
@@ -1742,7 +1807,7 @@ void CMainFrame::OnMenuAuto()//
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1755,7 +1820,7 @@ void CMainFrame::OnMenuAuto()//
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1768,7 +1833,7 @@ void CMainFrame::OnMenuAuto()//
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -1787,7 +1852,7 @@ void CMainFrame::OnMenuNormal()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1800,7 +1865,7 @@ void CMainFrame::OnMenuNormal()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1813,7 +1878,7 @@ void CMainFrame::OnMenuNormal()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -1833,7 +1898,7 @@ void CMainFrame::OnMenuSingle()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1846,7 +1911,7 @@ void CMainFrame::OnMenuSingle()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1859,7 +1924,7 @@ void CMainFrame::OnMenuSingle()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -1874,29 +1939,90 @@ void CMainFrame::OnMenuStop()
 }
 
 
-void CMainFrame::OnMenuForce()
+void CMainFrame::OnMenuForce() //软件触发
 {
 	// TODO: 在此添加命令处理程序代码
 //	12 34 0F 00 04 03 00 00 00 AB CD
 
+//	MaxChannel=1000000;
+//	AdcChange();
+//  bWaveShort=0;
+//OnBnClickedStop();
+	if(bWaitSoftware)
+		return;
+bWaitSoftware=1;
+BYTE forceCmd[100]={ 0x12, 0x34, 0x0F, 0x00, 0x04, 0x01, 0x00, 0x00, 0x01, 0xAB, 0xCD
+					,0x12, 0x34, 0x0F, 0x00, 0x10, 0x01, 0x00, 0x00, 0x02, 0xAB, 0xCD
+					,0x12, 0x34 ,0x0F ,0x00 ,0x11 ,0x01 ,0x00 ,0x00 ,0x02 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x01 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x00 ,0x00 ,0x00 ,0x24 ,0xAB ,0xCD 
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x03 ,0x00 ,0x00 ,0x00 ,0x04 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x03 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD};
 
-    m_TxData[0]=0x12;
-    m_TxData[1]=0x34;
-    m_TxData[2]=0x0f;
-    m_TxData[3]=0x0;
-    m_TxData[4]=0x04;
-    m_TxData[5]=0x03;
-    m_TxData[6]=0x0;
-    m_TxData[7]=0x0;
-    m_TxData[8]=0x0;
-    m_TxData[9]=0xab;
-    m_TxData[10]=0xcd;
-	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
-	bRevBegin=0;
-	bTrans=1;
-	
-/*
+int i,j;
+if(bFirstSoft==1)
+{
+	for(j=0;j<3;j++)
+	{
+		for(i=0;i<11;i++)
+			m_TxData[i]=forceCmd[j*11+i];
+		toBeWritten=11;
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+	}
+//	Sleep(1000);
+}
+	for(j=3;j<7;j++)
+	{
+		for(i=0;i<11;i++)
+			m_TxData[i]=forceCmd[j*11+i];
+		if(bWaveShort)
+		{
+		if(j==4)
+			m_TxData[8]=0x23;
+		if(j==5)
+			m_TxData[8]=0x03;
+		}
+		toBeWritten=11;
+//		if(i==3)
+//		Sleep(1500);
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+	}
+	SYSTEMTIME systemtime;
+	GetLocalTime(&systemtime);
+	unsigned short yy,mon,dd,hh1,mm,ss,ms;
+	yy=systemtime.wYear;
+	mon=systemtime.wMonth;
+	dd=systemtime.wDay;
+	hh1=systemtime.wHour;
+	mm=systemtime.wMinute;
+	ss=systemtime.wSecond;
+	ms=systemtime.wMilliseconds;
+	CString sdate;
+	sdate.Format("%02d.%02d.%02d",yy-2000,mon,dd);
+	m_pDlgBar->SetDlgItemText(IDC_STATIC_DATE2,sdate.GetBuffer(20));
+	sdate.Format("%02d.%02d.%02d",hh1,mm,ss);
+	m_pDlgBar->SetDlgItemText(IDC_STATIC_TIME3,sdate.GetBuffer(20));
+	sdate.Format("%d",ms);
+	m_pDlgBar->SetDlgItemText(IDC_STATIC_TIME4,sdate.GetBuffer(20));
+
+
+	for(i=0;i<3;i++)
+	{
+		bWaitWave[i]=1;
+		bRevBegin[i]=0;
+		nPreRevLen[i]=0;
+		nWaveStart[i]=0;
+		nReceiveWaveLen[i]=0;
+		bRxEnd[i]=0;
+	}
+	bFirstSoft=0;
+//	Sleep(1000);
+//	bTrans=1;
+/*	
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1910,6 +2036,7 @@ void CMainFrame::OnMenuForce()
     m_TxData[10]=0xcd;
 	toBeWritten=11;
 	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1918,7 +2045,7 @@ void CMainFrame::OnMenuForce()
     m_TxData[5]=0x03;
     m_TxData[6]=0x0;
     m_TxData[7]=0x0;
-    m_TxData[8]=0x01;
+    m_TxData[8]=0x0;
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
@@ -1942,7 +2069,7 @@ void CMainFrame::OnMenuTripUp()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1955,7 +2082,7 @@ void CMainFrame::OnMenuTripUp()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -1968,7 +2095,7 @@ void CMainFrame::OnMenuTripUp()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -1987,7 +2114,7 @@ void CMainFrame::OnMenuTripDown()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -2000,7 +2127,7 @@ void CMainFrame::OnMenuTripDown()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
     m_TxData[2]=0x0f;
@@ -2013,7 +2140,7 @@ void CMainFrame::OnMenuTripDown()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -2038,7 +2165,7 @@ void CMainFrame::OnMenu50()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	bAdcWorkOn[0] = 1;
 
 }
@@ -2059,7 +2186,7 @@ void CMainFrame::OnMenu10k()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 	bAdcWorkOn[0] = 0;
 
 }
@@ -2081,7 +2208,7 @@ void CMainFrame::OnMenuBaseline()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 
 }
 
@@ -2101,7 +2228,7 @@ void CMainFrame::OnMenuitemSetLd2()
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 
 }
 
@@ -2151,7 +2278,7 @@ void CMainFrame::SetSampleRate(int n)//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 //指令2
     m_TxData[0]=0x12;
     m_TxData[1]=0x34;
@@ -2168,7 +2295,7 @@ void CMainFrame::SetSampleRate(int n)//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 //指令3
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
@@ -2187,7 +2314,7 @@ void CMainFrame::SetSampleRate(int n)//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 //指令4
 	m_TxData[0]=0x12;
     m_TxData[1]=0x34;
@@ -2201,7 +2328,7 @@ void CMainFrame::SetSampleRate(int n)//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 }
 
 
@@ -2209,7 +2336,7 @@ void CMainFrame::SetSampleRate(int n)//采样率设置 n=1: 41.7M  n=2:  25M   n=3:  
 void CMainFrame::OnMenuitemSetHv()//设置高压
 {
 	// TODO: 在此添加命令处理程序代码
-	CDlgAmp dlg;
+	CDlgHVSet dlg;
 	dlg.DoModal();
 }
 
@@ -2218,18 +2345,52 @@ void CMainFrame::OnBnClickedRun()//外部触发开始
 {
 	// TODO: 在此添加控件通知处理程序代码
 //	bStopWave=0;
+	bFirstSoft=1;
+	if(bWaitHardware)
+		return;
 	bHardware=1;
 	bWaitHardware=1;
-	setWaveMode(bWaveShort,bHardware,1);
-/*
-	Init();
-	OnMenuBaseline();  
-	OnMenuitemSetLd();
-//	OnMenuSingle();
-	OnMenuitemForward();
-	OnMenuNormal();
-*/
+//	setWaveMode(bWaveShort,bHardware,1);
+//	bWaveShort=0;
+//	MaxChannel=1000000;
+//	AdcChange();
 
+BYTE forceCmd[100]={0x12,0x34,0x0F,0x00,0x04,0x01,0x00,0x00,0x01,0xAB,0xCD
+					,0x12,0x34,0x0F,0x00,0x10,0x01,0x00,0x00,0x01,0xAB,0xCD
+					,0x12,0x34 ,0x0F ,0x00 ,0x11 ,0x01 ,0x00 ,0x00 ,0x01 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x00 ,0x00 ,0x00 ,0x14 ,0xAB ,0xCD 
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x03 ,0x00 ,0x00 ,0x00 ,0x04 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x01 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD};
+
+int i,j;
+	for(j=0;j<6;j++)
+	{
+		for(i=0;i<11;i++)
+			m_TxData[i]=forceCmd[j*11+i];
+		if(bWaveShort)
+		{
+		if(j==3)
+			m_TxData[8]=0x13;
+		if(j==4)
+			m_TxData[8]=0x03;
+		}
+
+		m_TxData[11]=0x20;
+		toBeWritten=11;
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+	}
+	for(i=0;i<3;i++)
+	{
+		bWaitWave[i]=1;
+		bRevBegin[i]=0;
+		nPreRevLen[i]=0;
+		nWaveStart[i]=0;
+		nReceiveWaveLen[i]=0;
+		bRxEnd[i]=0;
+	}
+	Sleep(1000);
 
 }
 
@@ -2237,9 +2398,25 @@ void CMainFrame::OnBnClickedRun()//外部触发开始
 void CMainFrame::OnBnClickedStop()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	int i;
 	bHardware=0;
 	bWaitHardware=0;
-	bRevBegin=0;
+	bWaitSoftware=0;
+	for(int i=0;i<3;i++)
+	{
+		bRevBegin[i]=0;
+		bWaitWave[i]=0;
+	}
+	for(i=0;i<3;i++)
+	if(bTCPIPOK[i])
+	{
+		closesocket( iClientSock[i] );
+		WSACleanup( );
+	}
+	initTCP(0,bTCPIPOK[0]);
+	initTCP(1,bTCPIPOK[1]);
+	initTCP(2,bTCPIPOK[2]);
+	Init();
 }
 
 
@@ -2266,12 +2443,12 @@ void CMainFrame::OnBnClickedHvOpen()//开关高压
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
 
 }
 void CMainFrame::OnUpdateForce(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!bRevBegin);
+	pCmdUI->Enable(!bWaitSoftware);
 }
 void CMainFrame::OnUpdateRun(CCmdUI* pCmdUI)
 {
@@ -2279,72 +2456,59 @@ void CMainFrame::OnUpdateRun(CCmdUI* pCmdUI)
 }
 void CMainFrame::OnUpdateStop(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(bWaitHardware);
+	pCmdUI->Enable(bWaitHardware||bWaitSoftware);
 }
-void CMainFrame::initTCP()
+void CMainFrame::initTCP(int nTCP,bool &bTCPOK)
 {
 // TCP-IP初始化开始**************************************************
 	WSADATA WSAData;
-	bTCPIPOK=1;
+	bTCPOK=1;
 	if( WSAStartup( MAKEWORD( 2, 2 ), &WSAData ) )
 	{
 //	printf( "initializationing error!\n" );
 	WSACleanup( );
-	bTCPIPOK=0;
+	bTCPOK=0;
 //	exit( 0 );
 	}
-	if(bTCPIPOK)
+	if(bTCPOK)
 	{
-		if( ( iClientSock = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
+		if( ( iClientSock[nTCP] = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
 		{
 	//printf( "创建套接字失败!\n" );
 		WSACleanup( );
-		bTCPIPOK=0;
+		bTCPOK=0;
 	//exit( 0 );
 		}
 	}
 		int iMode = 1;
 		int retVal;
-	if(bTCPIPOK)
+	if(bTCPOK)
 	{
 //		retVal= ioctlsocket(iClientSock, FIONBIO, (u_long FAR*)&iMode);  //设置非阻塞模式
-	DWORD TimeOut=6000; //设置发送超时6秒
-	if(::setsockopt(iClientSock,SOL_SOCKET,SO_SNDTIMEO,(char *)&TimeOut,sizeof(TimeOut))==SOCKET_ERROR){
-	return ;
-	}
-	TimeOut=6000;//设置接收超时6秒
-	if(::setsockopt(iClientSock,SOL_SOCKET,SO_RCVTIMEO,(char *)&TimeOut,sizeof(TimeOut))==SOCKET_ERROR){
-	return ;
-	}
-	//设置非阻塞方式连接
-	unsigned long ul = 1;
-	retVal = ioctlsocket(iClientSock, FIONBIO, (unsigned long*)&ul);
-	if(retVal==SOCKET_ERROR)return ;
-
 		retVal=0;
 		if(retVal==SOCKET_ERROR)
 		{
-			bTCPIPOK=0;
+			bTCPOK=0;
 			WSACleanup( );
 		}
 		else
 		{
 			ServerAddr.sin_family = AF_INET;
 			ServerAddr.sin_port = htons(24);
-			ServerAddr.sin_addr.s_addr = inet_addr(serveIP );//记得换IP
+			ServerAddr.sin_addr.s_addr = inet_addr(serveIP[nTCP] );//记得换IP
 			memset( &( ServerAddr.sin_zero ), 0, sizeof( ServerAddr.sin_zero ) );
-			if( connect( iClientSock, ( struct sockaddr * ) & ServerAddr, sizeof( struct sockaddr ) ) == -1 )
+			if( connect( iClientSock[nTCP], ( struct sockaddr * ) & ServerAddr, sizeof( struct sockaddr ) ) == -1 )
 			{
 	//		printf( "connect失败!" );
 				WSACleanup( );
 	//		exit( 0 );
-				bTCPIPOK=0;
+				bTCPOK=0;
 			}
 			usbState.Format("TCP/IP连接成功！");
 		}
 	}
-	retVal= ioctlsocket(iClientSock, FIONBIO, (u_long FAR*)&iMode);  //设置非阻塞模式
-	if(!bTCPIPOK)
+	retVal= ioctlsocket(iClientSock[nTCP], FIONBIO, (u_long FAR*)&iMode);  //设置非阻塞模式
+	if(!bTCPOK)
 		usbState.Format("TCP/IP连接失败！");
 // TCP-IP初始化结束**************************************************
 }
@@ -2365,7 +2529,7 @@ int CMainFrame::getCount(int ch)
 				nUp++;
 			else
 			{
-				if(nUp<10)
+				if(nUp<mPeakPoint)
 				{
 					bUp=0;
 					nUp=0;
@@ -2375,7 +2539,7 @@ int CMainFrame::getCount(int ch)
 					if(bDown)
 					{
 						nDown++;
-						if(nUp>30&&nDown>30)
+						if(nUp>mPeakPoint&&nDown>mPeakPoint)
 						{
 							nCount++;
 							bUp=0;
@@ -2405,10 +2569,12 @@ int CMainFrame::getCount(int ch)
 void CMainFrame::OnBnClickedCh1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+/*
 	if(((CButton *)(m_pDlgBar->GetDlgItem(IDC_CH1)))->GetCheck())
 		bWaveDisp[0]=1;
 	else
 		bWaveDisp[0]=0;
+*/
 	w1[0]->Invalidate(0);
 }
 
@@ -2494,23 +2660,46 @@ void CMainFrame::OnCalCount()
 }
 
 
-void CMainFrame::OnBnClickedRadioWaveShort()//短波形
+void CMainFrame::OnBnClickedRadioWaveShort()//CH1自触发一次
 {
 	// TODO: 在此添加控件通知处理程序代码
 	bWaveShort=1;
 	MaxChannel=4000;
 	AdcChange();
-	setWaveMode(bWaveShort,0,1);
-}
+	w1[0]->dispspm.spara.Horz=1000;
+	BYTE CH1SelfTrigeCmd[100]={0x12,0x34,0x0F,0x00,0x04,0x01,0x00,0x00,0x01,0xAB,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x10 ,0x01 ,0x00 ,0x00 ,0x01 ,0xAB ,0xCD 
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x11 ,0x01 ,0x00 ,0x00 ,0x01 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x0 ,0x00 ,0x00 ,0x41 ,0xAB ,0xCD
+//					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x0 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x03 ,0x00 ,0x00 ,0x00 ,0x03 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x01 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD};
+	int i,j;
 
+	for(i=0;i<6;i++)
+		memset(pAdcBuf[i],0,2048*8);
+	for(j=0;j<6;j++)
+	{
+		for(i=0;i<11;i++)
+			m_TxData[i]=CH1SelfTrigeCmd[j*11+i];
+		m_TxData[11]=0x20;
+		toBeWritten=11;
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+	}
+	for(i=0;i<3;i++)
+	{
+		bRevBegin[i]=0;
+		nPreRevLen[i]=0;
+		nWaveStart[i]=0;
+		nReceiveWaveLen[i]=0;
+		bRxEnd[i]=0;
+		bWaitWave[i]=1;
+	}
+    m_pDlgBarState[0]->SetDlgItemTextA(IDC_REV_LEN,"0,0,0");
+	Sleep(1000);
 
-void CMainFrame::OnBnClickedRadioWaveLong()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	bWaveShort=0;
-	MaxChannel=1000000;
-	AdcChange();
-	setWaveMode(bWaveShort,0,0);
 }
 
 
@@ -2520,7 +2709,40 @@ void CMainFrame::OnBnClickedRadioWaveShort2()
 	bWaveShort=1;
 	MaxChannel=4000;
 	AdcChange();
-	setWaveMode(bWaveShort,0,0);
+	w1[0]->dispspm.spara.Horz=1000;
+	BYTE CH1SelfTrigeCmd[100]={0x12,0x34,0x0F,0x00,0x04,0x01,0x00,0x00,0x01,0xAB,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x10 ,0x01 ,0x00 ,0x00 ,0x01 ,0xAB ,0xCD 
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x11 ,0x01 ,0x00 ,0x00 ,0x01 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x0 ,0x00 ,0x00 ,0x42 ,0xAB ,0xCD
+//					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x0 ,0x00 ,0x00 ,0x02 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x03 ,0x00 ,0x00 ,0x00 ,0x03 ,0xAB ,0xCD
+					,0x12 ,0x34 ,0x0F ,0x00 ,0x04 ,0x01 ,0x00 ,0x00 ,0x00 ,0xAB ,0xCD};
+
+	int i,j;
+	for(i=0;i<6;i++)
+		memset(pAdcBuf[i],0,2048*8);
+	for(j=0;j<6;j++)
+	{
+		for(i=0;i<11;i++)
+			m_TxData[i]=CH1SelfTrigeCmd[j*11+i];
+		m_TxData[11]=0x20;
+		toBeWritten=11;
+		WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(1,m_TxData,toBeWritten,lpnumber);
+		WriteFileTCP(2,m_TxData,toBeWritten,lpnumber);
+	}
+	for(i=0;i<3;i++)
+	{
+		bRevBegin[i]=0;
+		nWaveStart[i]=0;
+		nReceiveWaveLen[i]=0;
+		bRxEnd[i]=0;
+		bWaitWave[i]=1;
+		nPreRevLen[i]=0;
+	}
+    m_pDlgBarState[0]->SetDlgItemTextA(IDC_REV_LEN,"0,0,0");
+	Sleep(1000);
+
 }
 
 void CMainFrame::setWaveMode(bool bShortWave,bool bHardware,bool bCh1) 
@@ -2537,7 +2759,7 @@ void CMainFrame::setWaveMode(bool bShortWave,bool bHardware,bool bCh1)
     m_TxData[9]=0xab;
     m_TxData[10]=0xcd;
 	toBeWritten=11;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[5]=0x0;
 	if(bShortWave)
 	{
@@ -2558,7 +2780,7 @@ void CMainFrame::setWaveMode(bool bShortWave,bool bHardware,bool bCh1)
 		else
 			m_TxData[8]=0x24;
 	}
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[4]=0x03;
 	if(bShortWave)
 	{
@@ -2575,12 +2797,18 @@ void CMainFrame::setWaveMode(bool bShortWave,bool bHardware,bool bCh1)
 	{
 	    m_TxData[8]=0x04;
 	}
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
     m_TxData[4]=0x04;
     m_TxData[5]=0x01;
     m_TxData[8]=0x00;
-	WriteFileTCP(iClientSock,m_TxData,toBeWritten,lpnumber);
-
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	if(bCh1)
+	{
+    m_TxData[4]=0x03;
+    m_TxData[5]=0x0;
+    m_TxData[8]=0x03;
+	WriteFileTCP(0,m_TxData,toBeWritten,lpnumber);
+	}
 }
 
 
@@ -2589,4 +2817,19 @@ void CMainFrame::On32871()
 	// TODO: 在此添加命令处理程序代码
 	CDlgSetLD dlg;
 	dlg.DoModal();
+}
+
+
+void CMainFrame::OnMenu()
+{
+	// TODO: 在此添加命令处理程序代码
+	CDlgSampleRateSet dlg;
+	if(dlg.DoModal()==IDOK)
+	{
+		if(bWaveShort)
+			MaxChannel=4000;
+		else
+			MaxChannel=1000000;
+		AdcChange();
+	}
 }

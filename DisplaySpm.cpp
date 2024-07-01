@@ -25,6 +25,8 @@ extern	int	mAdcGain;//采用率
 extern	CEnergyKedu energyKedu[4];
 extern	double   HV_k,HV_b,TH_k,TH_b;
 extern	COLORREF adcColor[6];
+extern	bool	bWaveShort;
+extern	int		Gain[4];
 
 long findmax(long far *pd,int ld)
 	 {
@@ -39,6 +41,20 @@ long findmax(long far *pd,int ld)
 			 }
 	 if(xmax<0)xmax=0;
 		return xmax;
+	 }
+long findmin(long far *pd,int ld)
+	 {
+		long xmin;
+		xmin=(long)*pd;
+		if(ld<2) return xmin;
+		pd++;
+		for(int i=1;i<=ld;i++)
+			 {
+			 if(*pd<xmin) xmin=*pd;
+			 pd++;
+			 }
+	 if(xmin<0)xmin=0;
+		return xmin;
 	 }
 DispSpm::DispSpm()
 {
@@ -66,7 +82,7 @@ void DispSpm::ReadyData(long far *pdata)
 	y2max=y2max*2.;
   int	xcur=CursorChn-spara.StartChn;
   cursorY = (float)*(pdata+xcur);
-  int yStartLine=65536*yBaseLine/20.;
+  int yStartLine=4096*yBaseLine/20.;
 
   if(kh>1.)  //x方向屏幕可显示点数小于谱道数
 	  {
@@ -92,7 +108,10 @@ void DispSpm::ReadyData(long far *pdata)
 			for(i=1;i<spara.SpmW;i++)
 				{
 				xstep1=(int)((i+1)*kh)-(int)(i*kh);
-				*ps=spara.SpmH-int(findmax(pdata,xstep1)-yStartLine)/(y2max)*spara.SpmH;
+				if(i%2==0)
+					*ps=spara.SpmH-int(findmax(pdata,xstep1)-yStartLine)/(y2max)*spara.SpmH;
+				else
+					*ps=spara.SpmH-int(findmin(pdata,xstep1)-yStartLine)/(y2max)*spara.SpmH;
 				if(*ps<5) *ps=5;
 				pdata+=xstep1;ps++;
 				}
@@ -134,6 +153,9 @@ void DispSpm::DispData(CDC *pDC,int wid,int ch,CPen &mforePen,CPen &redPen)
 	kh=(float)spara.Horz/(float)spara.SpmW;
 	roibz=0;
 	COLORREF tempColor;
+	int dtemp[4000];
+	for(i=0;i<4000;i++)
+		dtemp[i]=DispBuf[i];
 //	if(!linebz)  //不为打印
 	if(!linebz&&!wid)  //不为打印
 	{
@@ -244,7 +266,7 @@ void DispSpm::DispData(CDC *pDC,int wid,int ch,CPen &mforePen,CPen &redPen)
 	else if(wid) //为打印
 	{
 		int sx,sy,x1,y1;
-		sx=1;sy=1;
+		sx=1;sy=48;
 		pDC->SelectObject(&mforePen);
 		pDC->MoveTo(int(sx+3+nStartX),int(sy+DispBuf[0]));
 		for(i=1;i<spara.SpmW-1;i++)
@@ -315,54 +337,6 @@ int y1,y2,i;
 int xcur,ycur,ystep1;
 int Vort  = spara.Vort;
 double ymax;
-/*
-kh=(float)spara.Horz/(float)spara.SpmW;
-  ymax=1;
-  for(i=0;i<spara.Vort;i++)
-  ymax=ymax*2;
-  if(kh>1.)  //x方向屏幕可显示点数小于谱道数
-	{
-		xcur=CursorChn-spara.StartChn;
-//		double ty = (float)*(pdata+xcur);	
-		if(spara.IsLog==1)
-		{
-			if(cursorY==0)
-				ycur = spara.SpmH;
-			else
-				ycur=int(spara.SpmH-log(cursorY)*(float)spara.SpmH/24);
-		}
-		else
-		{
-			ycur=spara.SpmH-cursorY/ymax*spara.SpmH;
-		}
-		if(ycur<3)ycur=3;			
-		if(ycur<30)
-		{
-			y1=ycur+1;
-			y2=y1+30;
-		}
-		else
-		{
-			y2=ycur-1;
-			y1=y2-30;
-		}
-		xcur=CursorX;
-	}
-	else
-	{
-		xcur=(CursorChn-spara.StartChn);
-		if(DispBuf[xcur]<30)
-		{
-			y1=DispBuf[xcur]+1;
-			y2=y1+30;
-		}
-		else
-		{
-			y2=DispBuf[xcur]-1;
-			y1=y2-30;
-		}
-	}
-*/
 	mbkcolor=RGB(0,0, 0);
 	if(!pDC->IsPrinting())
 	{
@@ -388,36 +362,34 @@ void DispSpm::DispLabel(CDC *pDC)
 {
 	int i;
 	CString str,str1;
-	for(i=0;i<6;i++)
+	for(i=0;i<5;i++)
 	{
-		pDC->MoveTo(3+nStartX,nStartY+10+(spara.SpmH)*i/5);
-		pDC->LineTo(3+nStartX-10*kx,nStartY+10+(spara.SpmH)*i/5);
+		pDC->MoveTo(3+nStartX,nStartY+10+(spara.SpmH)*i/4.);
+		pDC->LineTo(3+nStartX-10*kx,nStartY+10+(spara.SpmH)*i/4.);
 	}
 	double ymax;
-	ymax=spara.SpmH*TH_k+TH_b;
+	ymax=spara.SpmH;//*TH_k+TH_b;
 	if(spara.IsLog==1)
 	{
 		ymax=24;
-		for(i=0;i<6;i++)
+		for(i=0;i<5;i++)
 		{
-			str.Format("%4d",int(pow(2,ymax*i/5.)*TH_k+TH_b));
-			pDC->TextOut(nStartX-70*kx,nStartY+10-5*ky+(spara.SpmH)*(5-i)/5,str);
+			str.Format("%4d",int(pow(2,ymax*i/4.)));
+			pDC->TextOut(nStartX-70*kx,nStartY+10-5*ky+(spara.SpmH)*(4-i)/4.,str);
 		}
 	}
 	else
 	{
 		ymax=1;
-		double yStartLine=65536*yBaseLine/20.;
-		yStartLine=yStartLine*TH_k+TH_b;
+		double yStartLine=4096*yBaseLine/20.;
 		float ydata1,energy;
 		for(i=0;i<spara.Vort;i++)
 			ymax=ymax*2;
-		ymax=ymax*TH_k+TH_b;
-		for(i=0;i<6;i++)
+		for(i=0;i<5;i++)
 		{
-			ydata1=ymax-i/5.*ymax+yStartLine;
-			str.Format("%5.1f",ydata1);
-			pDC->TextOut(nStartX-70*kx,nStartY+10-5*ky+(spara.SpmH)*i/5,str);
+			ydata1=ymax-i/4.*ymax+yStartLine;
+			str.Format("%5.0f",ydata1);
+			pDC->TextOut(nStartX-70*kx,nStartY+10-5*ky+(spara.SpmH)*i/4,str);
 		}
 	}
 }
@@ -432,22 +404,19 @@ void DispSpm::DispLabelX(CDC *pDC)
 		pDC->LineTo(3+nStartX+spara.SpmW*i/8.,spara.SpmH-10*ky);
 	}
 */
-	int	xmin;
+	float xmin;
 	char c5;
 	CString str2;
 //	xmin=(spara.StartChn+1)*controlData.m_VacuumTime;
 	int	xrange;
-	if(mAdcGain==1)
-		xrange=4000;
-	else if(mAdcGain==2)
-		xrange=160;
+	if(bWaveShort)
+		xrange=8;
 	else
-		xrange=500;
-	xrange=spara.Horz/1000000.*xrange;
-	xmin=(spara.StartChn)/(float)spara.Horz*xrange;
+		xrange=4000;
+	xmin=(spara.StartChn)/(float)Gain[0]*xrange;
 	for(i=0;i<9;i++)
 	{
-		str.Format("%5.2f",xmin+xrange*i/8.-xrange/2.);
+		str.Format("%5.2f",xmin+xrange*i/8.*spara.Horz/Gain[0]);
 		pDC->TextOut(3+nStartX+spara.SpmW*i/8.-10*kx,nStartY+10+spara.SpmH+15*ky,str);
 	}
 

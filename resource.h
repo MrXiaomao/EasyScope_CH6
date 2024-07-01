@@ -17,9 +17,21 @@
 #define IDD_DLG_ENERGY_KEDU             138
 #define IDD_DLG_SET_ROI                 139
 #define IDD_DLG_AMP                     142
+#define IDD_DLG_HV_SET                  142
 #define IDD_DLG_GAUSS                   143
 #define IDD_DLG_AUTO_SETUP              144
 #define IDD_DLG_SET_LD                  145
+#define IDB_BITMAP1                     146
+#define IDB_BITMAP2                     147
+#define IDD_DL_SAMPLERATE_SET           147
+#define IDB_BITMAP3                     148
+#define IDB_BITMAP6                     149
+#define IDB_BITMAP4                     150
+#define IDB_BITMAP5                     151
+#define IDB_BITMAP7                     152
+#define IDB_BITMAP8                     153
+#define IDB_BITMAP9                     154
+#define IDB_BITMAP10                    155
 #define IDD_DLG_RS232                   158
 #define IDD_DLG_ENERGY_KEDU1            159
 #define IDC_BUTTON_START                1000
@@ -40,8 +52,11 @@
 #define IDC_STATIC_LIVE                 1023
 #define IDC_STATIC_DATE2                1024
 #define IDC_RADIO_SYN                   1025
+#define IDC_STATIC_TIME3                1025
 #define IDC_STATIC_TIME2                1026
+#define IDC_STATIC_TIME4                1026
 #define IDC_RADIO_ASYN                  1027
+#define IDC_STATIC_TIME5                1027
 #define IDC_BTN_ADDY                    1028
 #define IDC_BTN_SUBY                    1029
 #define IDC_BTN_LOGY                    1030
@@ -126,11 +141,15 @@
 #define IDC_CH1_LD2                     1122
 #define IDC_HV                          1123
 #define IDC_CH1_LD3                     1123
+#define IDC_HV1                         1123
 #define IDC_USE4                        1124
 #define IDC_CH1_LD4                     1124
+#define IDC_HV3                         1124
 #define IDC_RADIO21                     1125
 #define IDC_CH1_LD5                     1125
 #define IDC_CH1_LD6                     1126
+#define IDC_CH1_LD7                     1127
+#define IDC_PEAK_POINT                  1127
 #define IDC_SPIN6                       1128
 #define IDC_CHECK_X4                    1129
 #define IDC_HV_SET                      1130
@@ -309,15 +328,16 @@
 #define ID_32869                        32869
 #define ID_CAL_COUNT                    32870
 #define ID_32871                        32871
+#define ID_Menu                         32872
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        146
-#define _APS_NEXT_COMMAND_VALUE         32872
-#define _APS_NEXT_CONTROL_VALUE         1122
+#define _APS_NEXT_RESOURCE_VALUE        148
+#define _APS_NEXT_COMMAND_VALUE         32873
+#define _APS_NEXT_CONTROL_VALUE         1125
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
